@@ -5,10 +5,10 @@
 using namespace std;
 
 int main() {
-    string file = "2body.dat";
+    string file = "Input/2body.dat";
     vector<vector<double>> table = importTable(file);
 
-    cout << table[1][1];
+    cout << table[1][1] << endl;
 
 
     return 0;
