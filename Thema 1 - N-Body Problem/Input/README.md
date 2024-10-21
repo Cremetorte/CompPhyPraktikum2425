@@ -1,0 +1,1 @@
+Die Dateien sind im Zeilenformat x y z vx vy vz m, d.h. pro Teilchen eine Zeile mit Position, Geschwindigkeit und Masse.
