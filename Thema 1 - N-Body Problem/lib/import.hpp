@@ -10,6 +10,7 @@
 
 
 // declare the functions here
-std::vector<std::vector<double>> importTable(const std::string& filename);
+std::vector<std::vector<double>> importData(const std::string& filename);
+void printData(std::vector<std::vector<double>> data);
 
 #endif
