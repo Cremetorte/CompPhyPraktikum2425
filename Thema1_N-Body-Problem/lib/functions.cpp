@@ -1,11 +1,13 @@
+//#include "functions.hpp"
 #include <vector>
 #include <iostream>
-#include <math>
+#include <math.h>
+
 
 using namespace std;
 
 
-vector<double> add_vectors(vector<double> v_1, vector<double> v_2) {
+vector<double> add_vectors(const vector<double>& v_1, const vector<double>& v_2) {
     int size1 = v_1.size();
     vector<double> finalVec;
     
@@ -14,7 +16,7 @@ vector<double> add_vectors(vector<double> v_1, vector<double> v_2) {
     }
 
     for (int i = 0; i < size1; i++) {
-        finalVec[i] = v_1[i] + v_2 [i];
+        finalVec.push_back(v_1[i] + v_2 [i]);
 
     }
 
@@ -25,7 +27,7 @@ vector<double> scalar_multiplication(double c, vector<double> vec) {
     vector<double> final_vec;
     
     for (int i = 0; i < vec.size(); i++) {
-        final_vec[i] = c*vec[i];
+        final_vec.push_back(c*vec[i]);
     }
 
     return final_vec;
