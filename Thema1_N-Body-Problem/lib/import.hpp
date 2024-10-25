@@ -12,5 +12,6 @@
 // declare the functions here
 std::vector<std::vector<double>> importData(const std::string& filename);
 void printData(std::vector<std::vector<double>> data);
+vector<vector<double>> process_data(vector<vector<double>> importedData); 
 
 #endif

@@ -1,4 +1,5 @@
 #include "lib/functions.hpp"
+#include "lib/import.hpp"
 #include <vector>
 #include <iostream>
 
@@ -6,8 +7,8 @@ using namespace std;
 
 
 int main() {
-        
-    vector<double> vector1 = {1, 2, 3};
+    //Test Vector functions  
+    /* vector<double> vector1 = {1, 2, 3};
     vector<double> vector2 = {4, 5, 6};
     vector<double> vectorsum;
     vectorsum = add_vectors(vector1, vector2);
@@ -22,6 +23,25 @@ int main() {
     
     double abs = absolute_value(vector1);
     cout << "The absolute value of the vector is: " << to_string(abs) << endl;
-    return 0;
+     */
 
+    string file = "Input/100body.csv";
+    vector<vector<double>> table = importData(file);
+    vector<vector<double>> processed_data = process_data(table);
+
+    cout << "Non-Processed-Data: " << endl;
+    printData(table);
+    cout << endl;
+
+    cout << "Processed-Data: " << endl;
+    printData(processed_data);
+    cout << endl;
+
+    cout << "COM before processing: ";
+    print_Vector(calc_COM(table));
+    cout << "COM after processing: ";
+    print_Vector(calc_COM(processed_data));
+
+    return 0;
+    
 }

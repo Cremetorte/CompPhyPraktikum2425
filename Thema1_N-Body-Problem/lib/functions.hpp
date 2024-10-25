@@ -15,6 +15,8 @@ vector<double> subtract_vectors(vector<double> v_1, vector<double> v_2);
 vector<double> extract_position(vector<double> raw_data_row);
 vector<double> extract_velocity(vector<double> raw_data_row);
 double absolute_value(vector<double> vec);
+vector<double> calc_COM(vector<vector<double>> data);
+void print_Vector(vector<double> vec);
 
 
 

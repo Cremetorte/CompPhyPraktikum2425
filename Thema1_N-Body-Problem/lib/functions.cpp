@@ -57,3 +57,21 @@ double absolute_value(vector<double> vec) {
     }
     return pow(abs, 0.5);
 }
+
+
+vector<double> calc_COM(vector<vector<double>> data) {
+    vector<double> COM = {0,0,0};
+
+    for (vector<double> particle_i : data) {
+        COM = add_vectors(scalar_multiplication(particle_i[6], extract_position(particle_i)), COM);
+    }
+
+    return COM;
+}
+
+void print_Vector(vector<double> vec) {
+    for (double i : vec) {
+        cout << i << ",";
+    }
+    cout << endl;
+}

@@ -5,10 +5,11 @@
 using namespace std;
 
 int main() {
+    //Dateiimport
     string file = "Input/100body.csv";
     vector<vector<double>> table = importData(file);
-
-    printData(table);
+    vector<vector<double>> data = process_data(table);
+    //printData(table);
 
 
     return 0;

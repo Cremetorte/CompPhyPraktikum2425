@@ -1,4 +1,5 @@
 #include "import.hpp"
+#include "functions.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -52,7 +53,7 @@ void printData(vector<vector<double>> data) {
  * @return A 2D vector of doubles representing the processed data.
  */
 vector<vector<double>> process_data(vector<vector<double>> importedData) {
-    int N = importedData.size();
+    double N = importedData.size();
     
     double total_mass = 0;
 
@@ -62,24 +63,36 @@ vector<vector<double>> process_data(vector<vector<double>> importedData) {
     }
 
     //normalize all masses
-    for (vector<double> particle_i : importedData) {
+    for (vector<double> &particle_i : importedData) {
         particle_i[6] /= total_mass;
     }
 
-    
-    vector<double> COM = ;
-
     //calculate COM
+    vector<double> COM = calc_COM(importedData);
+
+
+
+    //transform positions into COM
     for (int i = 0; i<3; i++){
-        for (vector<double> particle_i : importedData) {
-            COM[i] += particle_i[i]*particle_i[6];
+        for (vector<double> &particle_i : importedData) {
+            particle_i[i] -= COM[i];
         }
     }
 
-    //transform into COM
-    for (int i = 0; i<3; i++){
-        for (vector<double> particle_i : importedData) {
-            COM[i] += particle_i[i]*particle_i[6];
+    vector<double> COM_speed = {0,0,0};
+    //calculate velocity of COM
+
+    for (vector<double> particle_i : importedData) {
+        COM_speed = add_vectors(extract_velocity(particle_i), COM_speed);
+    }
+
+    COM_speed = scalar_multiplication(1/N, COM_speed);
+    //print_Vector(COM_speed);
+    
+    //transform velocities into COM Inertial frame
+    for (int i = 3; i<6; i++){
+        for (vector<double> &particle_i : importedData) {
+            particle_i[i] -= COM_speed[i];
         }
     }
 
