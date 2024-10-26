@@ -17,6 +17,7 @@ vector<double> extract_velocity(vector<double> raw_data_row);
 double absolute_value(vector<double> vec);
 vector<double> calc_COM(vector<vector<double>> data);
 void print_Vector(vector<double> vec);
+vector<vector<double>> zero_2d_arr(int rows, int cols);
 
 
 
