@@ -75,3 +75,17 @@ void print_Vector(vector<double> vec) {
     }
     cout << endl;
 }
+
+vector<vector<double>> zero_2d_arr(int rows, int cols) {
+    vector<vector<double>> output;
+    vector<double> zero_row;
+
+    for (int i=0; i<=cols; i++) {
+        zero_row.push_back(0);
+    }
+    for(int i=0; i<=rows;i++) {
+        output.push_back(zero_row);
+    }
+
+    return output;
+}
