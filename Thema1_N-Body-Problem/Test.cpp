@@ -1,7 +1,11 @@
 #include "lib/functions.hpp"
 #include "lib/import.hpp"
+#include "lib/export.hpp"
+#include "lib/velocity-verlet.hpp"
 #include <vector>
 #include <iostream>
+#include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -25,6 +29,8 @@ int main() {
     cout << "The absolute value of the vector is: " << to_string(abs) << endl;
      */
 
+    //Test Processing of Data
+/* 
     string file = "Input/100body.csv";
     vector<vector<double>> table = importData(file);
     vector<vector<double>> processed_data = process_data(table);
@@ -41,6 +47,31 @@ int main() {
     print_Vector(calc_COM(table));
     cout << "COM after processing: ";
     print_Vector(calc_COM(processed_data));
+ */
+
+
+    //Test Velocity-Verlet with 2-body
+    string file = "Input/2body.csv";
+    vector<vector<double>> table = importData(file);
+    vector<vector<double>> processed_data = process_data(table);
+    double t_max = 2;
+    double eta = 0.001;
+    double nr_steps = t_max/eta;
+
+    for (int step = 0; step < nr_steps; step++){
+        vector<vector<double>> evolved_data = velocity_verlet(processed_data, eta, 2);
+
+        //concatenate processed data and evolved data
+        processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
+    }
+
+    //print_data(processed_data);
+    print_Vector(dimensions(processed_data));
+
+
+    string output_file = "Output/2Body_Velocity_Verlet.csv";
+    write_to_csv(processed_data, output_file);
+
 
     return 0;
     

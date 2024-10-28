@@ -9,6 +9,17 @@
 using namespace std;
 
 
+/**
+ * @brief Imports CSV Data to 2D-vector.
+ * 
+ * Every Row gets converted to a vector. These vectors are put into one vector.
+ * The Entries should be in the following order:
+ * x, y, z, v_x, v_y, v_z, mass
+ * They have to be processed afterwards.
+ * 
+ * @param filename A string of the relative path of the file to be imported.
+ * @return A 2D vector of doubles representing the non-processed data.
+ */
 vector<vector<double>> importData(const string& filename) {
     vector<vector<double>> data;
     ifstream file(filename);
@@ -35,7 +46,16 @@ vector<vector<double>> importData(const string& filename) {
     return data;
 }
 
-void printData(vector<vector<double>> data) {
+
+/**
+ * @brief Prints the entries in a 2d-Vector-Array to the console.
+ * 
+ * Prints the entries in a 2d-Vector-Array to the console for debugging/testing purposes.
+ * 
+ * @param data A 2D vector of doubles.
+ * @return None.
+ */
+void print_data(vector<vector<double>> data) {
     for (const auto& row : data) {
         for (const auto& value : row) {
             cout << value << ",";
@@ -100,3 +120,5 @@ vector<vector<double>> process_data(vector<vector<double>> importedData) {
     return importedData;
 
 }
+
+

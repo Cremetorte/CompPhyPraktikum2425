@@ -80,12 +80,19 @@ vector<vector<double>> zero_2d_arr(int rows, int cols) {
     vector<vector<double>> output;
     vector<double> zero_row;
 
-    for (int i=0; i<=cols; i++) {
+    for (int i=0; i<cols; i++) {
         zero_row.push_back(0);
     }
-    for(int i=0; i<=rows;i++) {
+    for(int i=0; i<rows;i++) {
         output.push_back(zero_row);
     }
 
     return output;
+}
+
+vector<double> dimensions(vector<vector<double>> double_vector) {
+    vector<double> ret_vec;
+    ret_vec.push_back(double_vector.size());
+    ret_vec.push_back(double_vector[0].size());
+    return ret_vec;
 }
