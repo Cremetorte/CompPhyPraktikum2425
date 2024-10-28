@@ -4,11 +4,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
-// #include "euler.cpp"
+#include "beschleunigung.cpp"
 using namespace std;
 
 
 // declare the functions here
-vector<double> acceleration_vec(vector<vector<double>> table);
+vector<vector<double>> acceleration(vector<vector<double>> table);
 
 #endif

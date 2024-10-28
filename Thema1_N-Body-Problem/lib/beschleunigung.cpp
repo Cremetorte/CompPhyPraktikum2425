@@ -1,21 +1,30 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include "functions.hpp"
 
 using namespace std;
 
 
 vector<vector<double>> acceleration(vector<vector<double>> table){
-    vector<double> a_i;
+    vector<double> a_i = {0,0,0};
+    vector<double> a_i_one_term;
     vector<vector<double>> acc_matrix;
     for(vector<double> particle_i : table){
-        vector<double> r_i = {particle_i[0],particle_i[1],particle_i[2]};
+        //vector<double> r_i = {particle_i[0],particle_i[1],particle_i[2]};
+        vector<double> r_i = extract_position(particle_i);
         for(vector<double> particle_j : table){
             if(particle_i == particle_j){
                 continue;
             }
-            vector<double> r_j = {particle_j[0],particle_j[1],particle_j[2]};
-            a_i = particle_j[6] ;
+            //vector<double> r_j = {particle_j[0],particle_j[1],particle_j[2]};
+            vector<double> r_j = extract_position(particle_j);
+            double r_ij_absolute = pow(absolute_value(subtract_vectors(r_i, r_j)), 3);
+            a_i_one_term = scalar_multiplication((particle_j[6]/r_ij_absolute), subtract_vectors(r_i, r_j));
+            a_i = add_vectors(a_i, a_i_one_term);
+            
         }
+        acc_matrix.push_back(a_i);
     }
+    return acc_matrix;
 }
