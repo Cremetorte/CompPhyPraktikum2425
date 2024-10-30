@@ -13,7 +13,7 @@ using namespace std;
 int main() {
     //Test Vector functions  
     /* vector<double> vector1 = {1, 2, 3};
-    vector<double> vector2 = {4, 5, 6};
+    vector<double> vector2 = {-4, 5, 6};
     vector<double> vectorsum;
     vectorsum = add_vectors(vector1, vector2);
 
@@ -53,25 +53,39 @@ int main() {
     //Test Velocity-Verlet with 2-body
     string file = "Input/2body.csv";
     vector<vector<double>> table = importData(file);
+    cout << "Non-processed data: " << endl;
+    print_data(table);
+    cout << endl; 
+
     vector<vector<double>> processed_data = process_data(table);
+
+    cout << "Initial State: " << endl;
+    print_data(processed_data);
+    cout << endl;
+
     double t_max = 2;
     double eta = 0.001;
     double nr_steps = t_max/eta;
 
-    for (int step = 0; step < nr_steps; step++){
+    cout << "-------------------Calculation-------------------" << endl;
+    for (int step = 0; step < 3; step++){
+        cout << "step " << step << endl;
         vector<vector<double>> evolved_data = velocity_verlet(processed_data, eta, 2);
+        print_data(acceleration(evolved_data));
 
         //concatenate processed data and evolved data
         processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
     }
 
     //print_data(processed_data);
+
+    cout << "Dimensions of Data:" << endl;
     print_Vector(dimensions(processed_data));
 
 
     string output_file = "Output/2Body_Velocity_Verlet.csv";
     write_to_csv(processed_data, output_file);
-
+ 
 
     return 0;
     

@@ -19,7 +19,7 @@ vector<double> calc_COM(vector<vector<double>> data);
 void print_Vector(vector<double> vec);
 vector<vector<double>> zero_2d_arr(int rows, int cols);
 vector<double> dimensions(vector<vector<double>> double_vector);
-
+double nearly_zero_to_zero(double value);
 
 
 #endif

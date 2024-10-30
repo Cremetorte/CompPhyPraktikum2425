@@ -96,6 +96,7 @@ vector<vector<double>> process_data(vector<vector<double>> importedData) {
     for (int i = 0; i<3; i++){
         for (vector<double> &particle_i : importedData) {
             particle_i[i] -= COM[i];
+            particle_i[i] = nearly_zero_to_zero(particle_i[i]);
         }
     }
 
@@ -103,19 +104,21 @@ vector<vector<double>> process_data(vector<vector<double>> importedData) {
     //calculate velocity of COM
 
     for (vector<double> particle_i : importedData) {
-        COM_speed = add_vectors(extract_velocity(particle_i), COM_speed);
+        vector<double> momentum = scalar_multiplication(particle_i[6],extract_velocity(particle_i));
+        COM_speed = add_vectors(momentum, COM_speed);
+        
     }
 
-    COM_speed = scalar_multiplication(1/N, COM_speed);
     //print_Vector(COM_speed);
     
     //transform velocities into COM Inertial frame
     for (int i = 3; i<6; i++){
         for (vector<double> &particle_i : importedData) {
-            particle_i[i] -= COM_speed[i];
+            particle_i[i] -= COM_speed[i-3];
+            particle_i[i] = nearly_zero_to_zero(particle_i[i]);
         }
     }
-
+    
 
     return importedData;
 

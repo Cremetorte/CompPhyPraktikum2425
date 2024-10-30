@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+#include <iomanip>
 
 
 using namespace std;
@@ -71,7 +72,7 @@ vector<double> calc_COM(vector<vector<double>> data) {
 
 void print_Vector(vector<double> vec) {
     for (double i : vec) {
-        cout << i << ",";
+        cout << setprecision(16) << i << ",";
     }
     cout << endl;
 }
@@ -95,4 +96,9 @@ vector<double> dimensions(vector<vector<double>> double_vector) {
     ret_vec.push_back(double_vector.size());
     ret_vec.push_back(double_vector[0].size());
     return ret_vec;
+}
+
+
+double nearly_zero_to_zero(double value) {
+    return (std::abs(value) < std::numeric_limits<double>::epsilon()) ? 0.0 : value;
 }
