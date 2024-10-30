@@ -53,8 +53,8 @@ vector<double> extract_velocity(vector<double> raw_data_row) {
 
 double absolute_value(vector<double> vec) {
     double abs = 0;
-    for (int i = 0; i<vec.size(); i++) {
-        abs += vec[i]*vec[i];
+    for (double i : vec) {
+        abs += i*i;
     }
     return pow(abs, 0.5);
 }

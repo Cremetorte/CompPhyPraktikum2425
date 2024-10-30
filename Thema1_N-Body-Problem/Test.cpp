@@ -1,7 +1,7 @@
 #include "lib/functions.hpp"
 #include "lib/import.hpp"
 #include "lib/export.hpp"
-#include "lib/velocity-verlet.hpp"
+#include "lib/velocity_verlet_2.hpp"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -68,10 +68,10 @@ int main() {
     double nr_steps = t_max/eta;
 
     cout << "-------------------Calculation-------------------" << endl;
-    for (int step = 0; step < 3; step++){
-        cout << "step " << step << endl;
-        vector<vector<double>> evolved_data = velocity_verlet(processed_data, eta, 2);
-        print_data(acceleration(evolved_data));
+    for (int step = 0; step < nr_steps; step++){
+        //cout << "step " << step << endl;
+        vector<vector<double>> evolved_data = velocity_verlet_V2(processed_data, eta, 2);
+        //print_data(acceleration(evolved_data));
 
         //concatenate processed data and evolved data
         processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
