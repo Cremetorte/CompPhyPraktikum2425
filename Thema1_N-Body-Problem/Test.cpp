@@ -51,11 +51,8 @@ int main() {
 
 
     //Test Velocity-Verlet with 2-body
-    string file = "Input/2body.csv";
+    string file = "Input/100body.csv";
     vector<vector<double>> table = importData(file);
-    cout << "Non-processed data: " << endl;
-    print_data(table);
-    cout << endl; 
 
     vector<vector<double>> processed_data = process_data(table);
 
@@ -64,13 +61,13 @@ int main() {
     cout << endl;
 
     double t_max = 2;
-    double eta = 0.001;
+    double eta = 0.01;
     double nr_steps = t_max/eta;
 
     cout << "-------------------Calculation-------------------" << endl;
     for (int step = 0; step < nr_steps; step++){
         //cout << "step " << step << endl;
-        vector<vector<double>> evolved_data = velocity_verlet_V2(processed_data, eta, 2);
+        vector<vector<double>> evolved_data = velocity_verlet_V2(processed_data, eta, 100);
         //print_data(acceleration(evolved_data));
 
         //concatenate processed data and evolved data
@@ -83,7 +80,7 @@ int main() {
     print_Vector(dimensions(processed_data));
 
 
-    string output_file = "Output/2Body_Velocity_Verlet.csv";
+    string output_file = "Output/100Body_Velocity_Verlet.csv";
     write_to_csv(processed_data, output_file);
  
 

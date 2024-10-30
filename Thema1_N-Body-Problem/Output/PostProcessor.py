@@ -1,32 +1,44 @@
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+#get console arguments (without sys.argv[0] which is the file name)
+cmd_args = sys.argv[1::]
 
-
-#Number of particles
-N = 2
-
-data = np.loadtxt("Output/2Body_Velocity_Verlet.csv", delimiter = ",")
-
-particle1 = data[::2,::]
-#print(particle1.shape)
-particle1_r = particle1[:,:3]
-
-particle2 = data[1::2,::]
-#print(particle2.shape)
-particle2_r = particle2[:,:3]
-
-
-eta = 0.001
-fps = 60 #gives about 30s with 1 step/frame
+#check for correct nr of arguments
+if len(cmd_args) != 4:
+    raise ValueError("Not the correct number of arguments!\nUsage: PostProcessor.py input_filename nr_particles delta_t output_filename")
+else:
+    #extract arguments
+    filename, N, eta, output_filename = cmd_args
+    N, eta = int(N), float(eta)
+    print(f"Starting post-processing of file {filename}. Parameters: N = {N}, delta_t = {eta}.")
 
 
 
+#import data
+data = np.loadtxt(filename, delimiter=",")
+
+# Extract particles
+particles = []
+particle_rs = []
+for i in range(N):
+    particle = data[i::N, :]
+    particle_r = particle[:, :3]
+    particles.append(particle)
+    particle_rs.append(particle_r)
+
+#setup animation
+fps = 60
 fig = plt.figure()
-ax = fig.add_subplot(111, projection = "3d")
-scat1 = ax.scatter([], [], [], color = "blue", label = "Körper 1")
-scat2 = ax.scatter([], [], [], color = "red", label = "Körper 2")
+ax = fig.add_subplot(111, projection="3d")
+
+scatterers = []
+for i in range(N):
+    scat = ax.scatter([], [], [], color = np.random.rand(3,), label = f"Körper {i+1}")
+    scatterers.append(scat)
+
 
 
 x_max = np.max(data[:,0])
@@ -39,25 +51,25 @@ max_border = np.max([x_max,y_max,z_max])
 ax.set_xlim(-max_border, max_border)
 ax.set_ylim(-max_border, max_border)
 ax.set_zlim(-max_border, max_border)
-ax.legend()
+if N<5:
+    ax.legend()
 
 
 def init():
-    scat1._offsets3d = ([], [], [])
-    scat2._offsets3d = ([], [], [])
-    return scat1, scat2
+    for i in range(N):
+        scatterers[i]._offsets3d = ([],[],[])
+    return scatterers
 
 def update(frame):
-    x1, y1, z1 = particle1_r[frame*2]
-    x2, y2, z2 = particle2_r[frame*2]
-    scat1._offsets3d = ([x1], [y1], [z1])
-    scat2._offsets3d = ([x2], [y2], [z2])
-    return scat1, scat2
+    for i in range(N):
+        x, y, z = particle_rs[i][frame]
+        scatterers[i]._offsets3d = ([x], [y], [z])
+    return scatterers
 
-num_frames = min(len(particle1_r), len(particle2_r))
+num_frames = int(data.shape[0]/N)
 ani = FuncAnimation(fig, update, frames=num_frames, init_func=init, blit=True, interval = 1000/fps)
 
-
 print("Starting to write mp4 file. This could take some time.")
-ani.save("Output/Zweikoerper_animation.mp4", writer="ffmpeg")
+ani.save(output_filename, writer="ffmpeg")
+print("Finished Saving video.")
 print("\007")
