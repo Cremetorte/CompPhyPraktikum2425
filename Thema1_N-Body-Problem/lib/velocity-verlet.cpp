@@ -27,7 +27,7 @@ vector<vector<double>> velocity_verlet(vector<vector<double>> table, double delt
     if (table.size() < N) {
         throw std::out_of_range("Table size is smaller than nr_particles");
     }
-    vector<vector<double>> data_t_n(table.end() - N, table.end());
+    vector<vector<double>> data_t_n(table.end() - N, table.end()); 
 
     //initialize all needed quantities at t=t_n
     vector<vector<double>> r_n;
