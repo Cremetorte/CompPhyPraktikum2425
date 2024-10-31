@@ -8,7 +8,7 @@ cmd_args = sys.argv[1::]
 
 #check for correct nr of arguments
 if len(cmd_args) != 4:
-    raise ValueError("Not the correct number of arguments!\nUsage: PostProcessor.py input_filename nr_particles delta_t output_filename")
+    raise ValueError(f"Not the correct number of arguments!\nUsage: {sys.argv[0]} input_filename nr_particles delta_t output_filename")
 else:
     #extract arguments
     filename, N, eta, output_filename = cmd_args

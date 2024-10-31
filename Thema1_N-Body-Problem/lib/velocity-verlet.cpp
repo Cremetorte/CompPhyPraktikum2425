@@ -45,6 +45,8 @@ vector<vector<double>> velocity_verlet(vector<vector<double>> table, double delt
     //calculate a_n
     a_n = acceleration(data_t_n);
 
+    
+
 
     //initialize all quantities to be calculated, t=n+1
     vector<vector<double>> r_n_1;

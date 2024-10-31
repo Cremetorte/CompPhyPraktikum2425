@@ -49,7 +49,7 @@ int main() {
     print_Vector(dimensions(processed_data));
 
 
-    string output_file = "Output/3-body/2Body_Heun.csv";
+    string output_file = "Output/2-body/2Body_Heun.csv";
     write_to_csv(processed_data, output_file);
  
 
