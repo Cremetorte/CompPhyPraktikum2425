@@ -6,11 +6,10 @@
 #include <sstream>
 #include <vector>
 #include <string>
-// #include "euler.cpp"
+#include "euler.cpp"
 
 
 // declare the functions here
-std::vector<std::vector<double>> importData(const std::string& filename);
-void printData(std::vector<std::vector<double>> data);
+vector<vector<double>> euler(vector<vector<double>> table, double delta_t, int nr_Particles);
 
 #endif
