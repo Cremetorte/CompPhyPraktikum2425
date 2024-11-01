@@ -43,9 +43,9 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
     //calculate a_n
     a_n = acceleration(data_t_n);
 
-    cout << "acceleration at t_n:" << endl;
-    print_data(a_n);
-    cout << endl;
+    // cout << "acceleration at t_n:" << endl;
+    // print_data(a_n);
+    // cout << endl;
 
 
     //initialize all quantities to be calculated, t=n+1
@@ -55,7 +55,7 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
 
 
     //initialize intermediate variables
-
+    vector<vector<double>> intermed = data_t_n;
     //tilde_v_1 = delta_t*a_n
     vector<vector<double>> tilde_v_1;
     //tilde_r_1 = delta_t*v_n
@@ -69,52 +69,32 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
     for (int i=0; i<N; i++) {
         tilde_v_1.push_back(scalar_multiplication(delta_t, a_n[i]));
         tilde_r_1.push_back(scalar_multiplication(delta_t, v_n[i]));
-    }
-
-    // cout << "v_1 tilde: ";
-    // print_data(tilde_v_1);
-    // cout << "r_1 tilde: ";
-    // print_data(tilde_r_1);
-    // cout << endl;
-
-    //calculate a(r_n + tilde_r_1)
-    //prepare 2d matrix in the usual format
-    vector<vector<double>> intermed = zero_2d_arr(N,7);
-    for (int i=0; i<N; i++){
+        
+        //move only particle i  to  r_n + tilde_r_1 to calculate a(r_n + tilde_r_1)
+        //prepare 2d matrix in the usual format
         for (int j=0; j<3; j++) {
             intermed[i][j] = add_vectors(r_n[i], tilde_r_1[i])[j];
         }
-        intermed[i][6]  = data_t_n[i][6];
-    }
-    // cout << "intermediate places and masses:" << endl;
-    // print_data(intermed);
+        //calculate a(r_n + tilde_r_1)
+        vector<vector<double>> int_acc = acceleration(intermed);
 
-    // cout << endl << "intermediate acceleration: " << endl;
-    vector<vector<double>> int_acc = acceleration(intermed);
-    // print_data(int_acc);
-    // cout << endl;
-
-    //calculate tilde_v_2 = delta_t*a(r_n + tilde_r_1)
-    for (int i=0; i<N; i++) {
+        //calculate tilde_v_2
         tilde_v_2.push_back(scalar_multiplication(delta_t, int_acc[i]));
+
+        //calculate tilde_r_2
         tilde_r_2.push_back(scalar_multiplication(delta_t, add_vectors(v_n[i], tilde_v_1[i])));
     }
-    cout << "v_2 tilde: ";
-    print_data(tilde_v_2);
-    cout << "r_2 tilde: ";
-    print_data(tilde_r_2);
-    cout << endl;
 
     //calculate r_n+1 and v_n+1:
     for (int i=0; i<N; i++) {
         v_n_1.push_back(add_vectors(v_n[i], scalar_multiplication(0.5, add_vectors(tilde_v_1[i], tilde_v_2[i]))));
         r_n_1.push_back(add_vectors(r_n[i], scalar_multiplication(0.5, add_vectors(tilde_r_1[i], tilde_r_2[i]))));
     }
-    cout << "v_n+1: " << endl;
-    print_data(v_n_1);
-    cout << "r_n+1: " << endl;
-    print_data(r_n_1);
-    cout << endl;
+    // cout << "v_n+1: " << endl;
+    // print_data(v_n_1);
+    // cout << "r_n+1: " << endl;
+    // print_data(r_n_1);
+    // cout << endl;
 
     //push r_n+1, v_n+1 and masses to output
     for (int i = 0; i<N; i++) {
@@ -124,9 +104,9 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
             data_t_n_1[i][6] = data_t_n[i][6];
         }
     }
-    cout << "new data table: " << endl;
-    print_data(data_t_n_1);
-    cout << endl;
+    // cout << "new data table: " << endl;
+    // print_data(data_t_n_1);
+    // cout << endl;
 
     return data_t_n_1;
 }
