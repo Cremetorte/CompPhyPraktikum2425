@@ -1,5 +1,5 @@
-#ifndef VELOCITY_VERLET_HPP
-#define VELOCITY_VERLET_HPP
+#ifndef HEUN_HPP
+#define HEUN_HPP
 
 #include <vector>
 #include "functions.hpp"

@@ -51,7 +51,6 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
     //initialize all quantities to be calculated, t=n+1
     vector<vector<double>> r_n_1;
     vector<vector<double>> v_n_1;
-    vector<vector<double>> a_n_1;
 
 
     //initialize intermediate variables
@@ -67,11 +66,11 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
 
     //calculate intermediate variables
     for (int i=0; i<N; i++) {
+        //tilde_r_1 and tilde_r_2:
         tilde_v_1.push_back(scalar_multiplication(delta_t, a_n[i]));
         tilde_r_1.push_back(scalar_multiplication(delta_t, v_n[i]));
         
         //move only particle i  to  r_n + tilde_r_1 to calculate a(r_n + tilde_r_1)
-        //prepare 2d matrix in the usual format
         for (int j=0; j<3; j++) {
             intermed[i][j] = add_vectors(r_n[i], tilde_r_1[i])[j];
         }
@@ -83,6 +82,9 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
 
         //calculate tilde_r_2
         tilde_r_2.push_back(scalar_multiplication(delta_t, add_vectors(v_n[i], tilde_v_1[i])));
+
+        //reset intermediate positions to t_n
+        intermed = data_t_n;
     }
 
     //calculate r_n+1 and v_n+1:

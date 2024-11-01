@@ -118,3 +118,22 @@ vector<double> dimensions(vector<vector<double>> double_vector) {
 double nearly_zero_to_zero(double value) {
     return (std::abs(value) < std::numeric_limits<double>::epsilon()) ? 0.0 : value;
 }
+
+
+
+//Overload operators for vectors
+
+//addition
+vector<double> operator+(const vector<double>& a, const vector<double>& b) {
+    return add_vectors(a,b);
+}
+
+//substraction
+vector<double> operator-(const vector<double>& a, const vector<double>& b) {
+    return subtract_vectors(a,b);
+}
+
+//scalar multiplication
+vector<double> operator*(const double& a, const vector<double>& b) {
+    return scalar_multiplication(a,b);
+}

@@ -22,5 +22,10 @@ vector<vector<double>> zero_2d_arr(int rows, int cols);
 vector<double> dimensions(vector<vector<double>> double_vector);
 double nearly_zero_to_zero(double value);
 
+//Operatoren
+vector<double> operator+(const vector<double>& a, const vector<double>& b);
+vector<double> operator-(const vector<double>& a, const vector<double>& b);
+vector<double> operator*(const double& a, const vector<double>& b);
+
 
 #endif

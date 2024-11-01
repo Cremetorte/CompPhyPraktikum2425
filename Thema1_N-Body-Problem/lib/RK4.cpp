@@ -54,7 +54,7 @@ vector<vector<double>> RK4(vector<vector<double>> table, double delta_t, int nr_
 
 
     //initialize intermediate variables
-
+    vector<vector<double>> intermed = data_t_n;
     //tilde_v_1 = delta_t*a_n
     vector<vector<double>> tilde_v_1;
     //tilde_r_1 = delta_t*v_n
@@ -72,17 +72,77 @@ vector<vector<double>> RK4(vector<vector<double>> table, double delta_t, int nr_
     //tilde_r_4 = delta_t*(v_n + tilde_v_3)
     vector<vector<double>> tilde_r_4;
 
-    //initialize intermediate table for acceleration
-    vector<vector<double>> data_temp;
-    vector<vector<double>> acc_temp;
+
 
     //calculate intermediate variables
-    //tilde_r_1 and tilde_r_2:
     for (int i = 0; i<N; i++) {
-        tilde_v_1.push_back(scalar_multiplication(delta_t, a_n[i]));
-        tilde_r_1.push_back(scalar_multiplication(delta_t, v_n[i]));
+        //tilde_r_1 and tilde_r_2:
+        tilde_v_1.push_back(delta_t * a_n[i]);
+        tilde_r_1.push_back(delta_t * v_n[i]);
+
+        //move only particle i  to  r_n + 0.5*tilde_r_1 to calculate a(r_n + tilde_r_1)
+        for (int j=0; j<3; j++) {
+            intermed[i][j] = (r_n[i] + (0.5 * tilde_r_1[i]))[j];
+        }
+        //calculate a(r_n + tilde_r_1)
+        vector<vector<double>> int_acc = acceleration(intermed);
+
+        //calculate tilde_v_2:
+        tilde_v_2.push_back(delta_t * int_acc[i]);
+
+        //calculate tilde_r_2
+        tilde_r_2.push_back(delta_t * (v_n[i] + 0.5 * tilde_v_1[i]));
+
+
+
+        //reset intermediate positions to t_n
+        intermed = data_t_n;
+        //move only particle i  to  r_n + 0.5*tilde_r_2 to calculate a(r_n + 0.5 tilde_r_2)
+        for (int j=0; j<3; j++) {
+            intermed[i][j] = (r_n[i] + (0.5 * tilde_r_2[i]))[j];
+        }
+        //calculate a(r_n + 0.5*tilde_r_2)
+        int_acc = acceleration(intermed);
+
+        //calculate tilde_v_3:
+        tilde_v_3.push_back(delta_t * int_acc[i]);
+
+        //calculate tilde_r_3
+        tilde_r_3.push_back(delta_t * (v_n[i] + 0.5 * tilde_v_2[i]));
+
+
+
+        //reset intermediate positions to t_n
+        intermed = data_t_n;
+        //move only particle i  to  r_n + tilde_r_3 to calculate a(r_n + tilde_r_3)
+        for (int j=0; j<3; j++) {
+            intermed[i][j] = (r_n[i] + tilde_r_3[i])[j];
+        }
+        //calculate a(r_n + tilde_r_3)
+        int_acc = acceleration(intermed);
+
+        //calculate tilde_v_4:
+        tilde_v_4.push_back(delta_t * int_acc[i]);
+
+        //calculate tilde_r_4
+        tilde_r_4.push_back(delta_t * (v_n[i] + tilde_v_3[i]));
+        
+
+        //calculate v_n+1, r_n+1
+        v_n_1.push_back(v_n[i] + 1.0/6 * (tilde_v_1[i] + tilde_v_4[i]) + 1.0/3 * (tilde_v_2[i] + tilde_v_3[i]));
+        r_n_1.push_back(r_n[i] + 1.0/6 * (tilde_r_1[i] + tilde_r_4[i]) + 1.0/3 * (tilde_r_2[i] + tilde_r_3[i]));
     }
 
+    
+    //push r_n+1, v_n+1 and masses to output
+    for (int i = 0; i<N; i++) {
+        for (int j = 0; j<3; j++) {
+            data_t_n_1[i][j] = r_n_1[i][j];
+            data_t_n_1[i][j+3] = v_n_1[i][j];
+            data_t_n_1[i][6] = data_t_n[i][6];
+        }
+    }
 
+    return data_t_n_1;
 
 }
