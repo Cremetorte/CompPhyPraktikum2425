@@ -1,5 +1,5 @@
-#ifndef HEUN_HPP
-#define HEUN_HPP
+#ifndef RK4_HPP
+#define RK4_HPP
 
 #include <vector>
 #include "functions.hpp"
