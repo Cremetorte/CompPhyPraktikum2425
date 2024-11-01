@@ -40,7 +40,6 @@ vector<vector<double>> euler(vector<vector<double>> table, double delta_t, int n
     vector<vector<double>> r_n_1;
     vector<vector<double>> v_n_1;
 
-    //code
     //calculate v_n_1
     for (int i = 0; i<N; i++) {
         vector<double> new_vel = {0,0,0};
@@ -58,7 +57,7 @@ vector<vector<double>> euler(vector<vector<double>> table, double delta_t, int n
         vector<double> vel_time_product = scalar_multiplication(delta_t, v_n[i]);
         new_pos = add_vectors(r_n[i], vel_time_product);
 
-        v_n_1.push_back(new_pos);
+        r_n_1.push_back(new_pos);
     }
 
     //push r_n_1 and masses to output in order to calculate a_n+1

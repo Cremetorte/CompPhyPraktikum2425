@@ -24,6 +24,22 @@ vector<double> add_vectors(const vector<double>& v_1, const vector<double>& v_2)
     return finalVec;
 }
 
+double scalar_product(const vector<double>& v_1, const vector<double>& v_2) {
+    int size1 = v_1.size();
+    vector<double> vec;
+    double scalar;
+
+    for (int i = 0; i < size1; i++) {
+        vec.push_back(v_1[i] * v_2 [i]);
+
+    }
+    for (int j = 0; j < size1; j++){
+        scalar = scalar + vec[j];
+    }
+
+    return scalar;
+}
+
 vector<double> scalar_multiplication(double c, vector<double> vec) {
     vector<double> final_vec;
     

@@ -1,7 +1,7 @@
 #include "lib/functions.hpp"
 #include "lib/import.hpp"
 #include "lib/export.hpp"
-#include "lib/euler.hpp"
+#include "lib/euler-cromer.hpp"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -28,12 +28,12 @@ int main() {
     
     cout << "Calculating " << nr_steps << " steps" << endl;
     
-    vector<vector<double>> evolved_data = euler(processed_data, eta, 2);
+    vector<vector<double>> evolved_data = euler_cromer(processed_data, eta, 2);
     processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
     
     for (int step = 1; step < nr_steps; step++){
         //cout << "step " << step << endl;
-        evolved_data = euler(evolved_data, eta, 2);
+        evolved_data = euler_cromer(evolved_data, eta, 2);
         //print_data(acceleration(evolved_data));
 
         //concatenate processed data and evolved data
@@ -49,7 +49,7 @@ int main() {
     print_Vector(dimensions(processed_data));
 
 
-    string output_file = "Output/2-body/2Body_Euler.csv";
+    string output_file = "Output/2-body/2Body_Euler-Cromer.csv";
     write_to_csv(processed_data, output_file);
  
 
