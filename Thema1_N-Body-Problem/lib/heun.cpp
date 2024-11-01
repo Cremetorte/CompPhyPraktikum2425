@@ -71,11 +71,11 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
         tilde_r_1.push_back(scalar_multiplication(delta_t, v_n[i]));
     }
 
-    cout << "v_1 tilde: ";
-    print_data(tilde_v_1);
-    cout << "r_1 tilde: ";
-    print_data(tilde_r_1);
-    cout << endl;
+    // cout << "v_1 tilde: ";
+    // print_data(tilde_v_1);
+    // cout << "r_1 tilde: ";
+    // print_data(tilde_r_1);
+    // cout << endl;
 
     //calculate a(r_n + tilde_r_1)
     //prepare 2d matrix in the usual format
@@ -86,13 +86,13 @@ vector<vector<double>> heun(vector<vector<double>> table, double delta_t, int nr
         }
         intermed[i][6]  = data_t_n[i][6];
     }
-    cout << "intermediate places and masses:" << endl;
-    print_data(intermed);
+    // cout << "intermediate places and masses:" << endl;
+    // print_data(intermed);
 
-    cout << endl << "intermediate acceleration: " << endl;
+    // cout << endl << "intermediate acceleration: " << endl;
     vector<vector<double>> int_acc = acceleration(intermed);
-    print_data(int_acc);
-    cout << endl;
+    // print_data(int_acc);
+    // cout << endl;
 
     //calculate tilde_v_2 = delta_t*a(r_n + tilde_r_1)
     for (int i=0; i<N; i++) {
