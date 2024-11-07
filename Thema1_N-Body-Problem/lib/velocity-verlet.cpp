@@ -49,9 +49,9 @@ vector<vector<double>> velocity_verlet(vector<vector<double>> table, double delt
 
 
     //initialize all quantities to be calculated, t=n+1
-    vector<vector<double>> r_n_1;
-    vector<vector<double>> v_n_1;
-    vector<vector<double>> a_n_1;
+    vector<vector<double>> r_n_1 = zero_2d_arr(N,7);
+    vector<vector<double>> v_n_1 = zero_2d_arr(N,7);
+    vector<vector<double>> a_n_1 = zero_2d_arr(N,7);
 
     //calculate r_n_1
     for (int i = 0; i<N; i++) {
@@ -63,7 +63,7 @@ vector<vector<double>> velocity_verlet(vector<vector<double>> table, double delt
         new_pos = add_vectors(v_part, new_pos);
         new_pos = add_vectors(a_part, new_pos);
 
-        r_n_1.push_back(new_pos);
+        r_n_1[i] = new_pos;
     }
 
     //push r_n_1 and masses to output in order to calculate a_n+1
@@ -89,7 +89,7 @@ vector<vector<double>> velocity_verlet(vector<vector<double>> table, double delt
         /* cout << "New Velocity of Particle " << i << ":";
         print_Vector(new_vel);
  */
-        v_n_1.push_back(new_vel);
+        v_n_1[i] = new_vel;
     }
 
     //push v_n_1 to output
