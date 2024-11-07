@@ -31,7 +31,6 @@ void write_to_csv(vector<vector<double>> data,const string& path_filename) {
     }
 
     stringstream line;
-    outputFile << setprecision(std::numeric_limits<double>::digits10 + 1); //sets full precision for saving data
     for (vector<double> row : data) {
         line.str("");
         for (int i = 0; i < row.size()-1; i++) {

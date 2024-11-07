@@ -16,6 +16,7 @@ using namespace std;
  * @param nr_particles Number of particles N.
  * @return A 2D vector of doubles representing the calculated state at t_n+1.
  */
+
 vector<vector<double>> RK4(vector<vector<double>> table, double delta_t, int nr_Particles) {
     //rename nr of particles
     int N = nr_Particles;
@@ -72,13 +73,24 @@ vector<vector<double>> RK4(vector<vector<double>> table, double delta_t, int nr_
     //tilde_r_4 = delta_t*(v_n + tilde_v_3)
     vector<vector<double>> tilde_r_4;
 
-
+    // Pre-allocate vectors
+    tilde_v_1.resize(N);
+    tilde_r_1.resize(N);
+    tilde_v_2.resize(N);
+    tilde_r_2.resize(N);
+    tilde_v_3.resize(N);
+    tilde_r_3.resize(N);
+    tilde_v_4.resize(N);
+    tilde_r_4.resize(N);
+    v_n_1.resize(N);
+    r_n_1.resize(N);
 
     //calculate intermediate variables
+    #pragma omp parallel for
     for (int i = 0; i<N; i++) {
         //tilde_r_1 and tilde_r_2:
-        tilde_v_1.push_back(delta_t * a_n[i]);
-        tilde_r_1.push_back(delta_t * v_n[i]);
+        tilde_v_1[i] = delta_t * a_n[i];
+        tilde_r_1[i] = delta_t * v_n[i];
 
         //move only particle i  to  r_n + 0.5*tilde_r_1 to calculate a(r_n + tilde_r_1)
         for (int j=0; j<3; j++) {
@@ -88,10 +100,10 @@ vector<vector<double>> RK4(vector<vector<double>> table, double delta_t, int nr_
         vector<vector<double>> int_acc = acceleration(intermed);
 
         //calculate tilde_v_2:
-        tilde_v_2.push_back(delta_t * int_acc[i]);
+        tilde_v_2[i] = delta_t * int_acc[i];
 
         //calculate tilde_r_2
-        tilde_r_2.push_back(delta_t * (v_n[i] + 0.5 * tilde_v_1[i]));
+        tilde_r_2[i] = (delta_t * (v_n[i] + 0.5 * tilde_v_1[i]));
 
 
 
@@ -105,10 +117,10 @@ vector<vector<double>> RK4(vector<vector<double>> table, double delta_t, int nr_
         int_acc = acceleration(intermed);
 
         //calculate tilde_v_3:
-        tilde_v_3.push_back(delta_t * int_acc[i]);
+        tilde_v_3[i] = (delta_t * int_acc[i]);
 
         //calculate tilde_r_3
-        tilde_r_3.push_back(delta_t * (v_n[i] + 0.5 * tilde_v_2[i]));
+        tilde_r_3[i] = (delta_t * (v_n[i] + 0.5 * tilde_v_2[i]));
 
 
 
@@ -122,15 +134,15 @@ vector<vector<double>> RK4(vector<vector<double>> table, double delta_t, int nr_
         int_acc = acceleration(intermed);
 
         //calculate tilde_v_4:
-        tilde_v_4.push_back(delta_t * int_acc[i]);
+        tilde_v_4[i] = (delta_t * int_acc[i]);
 
         //calculate tilde_r_4
-        tilde_r_4.push_back(delta_t * (v_n[i] + tilde_v_3[i]));
+        tilde_r_4[i] = (delta_t * (v_n[i] + tilde_v_3[i]));
         
 
         //calculate v_n+1, r_n+1
-        v_n_1.push_back(v_n[i] + 1.0/6 * (tilde_v_1[i] + tilde_v_4[i]) + 1.0/3 * (tilde_v_2[i] + tilde_v_3[i]));
-        r_n_1.push_back(r_n[i] + 1.0/6 * (tilde_r_1[i] + tilde_r_4[i]) + 1.0/3 * (tilde_r_2[i] + tilde_r_3[i]));
+        v_n_1[i] = (v_n[i] + 1.0/6 * (tilde_v_1[i] + tilde_v_4[i]) + 1.0/3 * (tilde_v_2[i] + tilde_v_3[i]));
+        r_n_1[i] = (r_n[i] + 1.0/6 * (tilde_r_1[i] + tilde_r_4[i]) + 1.0/3 * (tilde_r_2[i] + tilde_r_3[i]));
     }
 
     

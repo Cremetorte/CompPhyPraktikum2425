@@ -13,7 +13,7 @@ using namespace std;
 int main() {
     
     //Test Velocity-Verlet with 2-body
-    string file = "Input/3body.csv";
+    string file = "Input/1kbody.csv";
     vector<vector<double>> table = importData(file);
 
     vector<vector<double>> processed_data = process_data(table);
@@ -22,23 +22,23 @@ int main() {
     print_data(processed_data);
     cout << endl;
 
-    double t_max = 220;
-    double eta = 0.001;
+    double t_max = 2;
+    double eta = 0.01;
     double nr_steps = t_max/eta;
     
     cout << "Calculating " << nr_steps << " steps" << endl;
 
-    vector<vector<double>> evolved_data = velocity_verlet(processed_data, eta, 3);
+    vector<vector<double>> evolved_data = velocity_verlet(processed_data, eta, 1000);
     processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
     
     for (int step = 1; step < nr_steps; step++){
         //cout << "step " << step << endl;
-        evolved_data = velocity_verlet(evolved_data, eta, 3);
+        evolved_data = velocity_verlet(evolved_data, eta, 1000);
         //print_data(acceleration(evolved_data));
 
         //concatenate processed data and evolved data
         processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
-        if (step % 10000 == 0) {
+        if (step % 1 == 0) {
             cout << "step " << step << "/" << nr_steps << endl;
         }
     }
@@ -49,7 +49,7 @@ int main() {
     print_Vector(dimensions(processed_data));
 
 
-    string output_file = "Output/3-body/3Body_Velocity_Verlet.csv";
+    string output_file = "Output/1k-body/1kBody_Velocity_Verlet.csv";
     write_to_csv(processed_data, output_file);
  
 
