@@ -60,7 +60,7 @@ vector<vector<double>> euler_cromer(vector<vector<double>> table, double delta_t
         r_n_1.push_back(new_pos);
     }
 
-    //push r_n_1 and masses to output in order to calculate a_n+1
+    //push r_n_1 and masses to output
     for (int i = 0; i<N; i++) {
         for (int j = 0; j<3; j++) {
             data_t_n_1[i][j] = r_n_1[i][j];
