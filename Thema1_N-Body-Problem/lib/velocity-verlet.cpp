@@ -43,7 +43,7 @@ vector<vector<double>> velocity_verlet(vector<vector<double>> table, double delt
         v_n.push_back(extract_velocity(particle));
     }
     //calculate a_n
-    a_n = acceleration(data_t_n);
+    a_n = acceleration_parallel(data_t_n);
 
     
 
@@ -75,7 +75,7 @@ vector<vector<double>> velocity_verlet(vector<vector<double>> table, double delt
     }
 
     //calculate a_n+1
-    a_n_1 = acceleration(data_t_n_1);
+    a_n_1 = acceleration_parallel(data_t_n_1);
 
     //calculate v_n_1
     for (int i = 0; i<N; i++) {

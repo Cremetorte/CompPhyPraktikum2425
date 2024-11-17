@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     }
     else if (string(argv[1]) == "RK4")
     {
-        integrator = RK4;
+        integrator = RK4_field;
     }
     else if (string(argv[1]) == "velocity-verlet")
     {
@@ -82,18 +82,20 @@ int main(int argc, char* argv[]) {
     processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
     
     for (int step = 1; step < nr_steps; step++){
+        //output every 10th step:
+        if (step%10 == 0) {
+            cout << "\r" << "calculating step " << step << "/" << nr_steps << flush;
+        }
+
         evolved_data = integrator(evolved_data, delta_t, N);
 
         //concatenate processed data and evolved data
         processed_data.insert(processed_data.end(), evolved_data.begin(),evolved_data.end());
         
-        //output step number every 100 steps:
-        if (step % 100 == 0) {
-            cout << "step " << step << "/" << nr_steps << endl;
-        }
+        
     }
-
-    cout << "Finished calculation" << endl;
+    cout << "\r" << "calculating step " << nr_steps << "/" << nr_steps << flush;
+    cout << endl << "Finished calculation" << endl;
 
     //write to csv
     write_to_csv(processed_data, outputfile);
@@ -107,7 +109,12 @@ int main(int argc, char* argv[]) {
 
         stringstream command_ss;
         command_ss << "python3 Output/VideoGenerator.py " << outputfile << " " << N << " " << delta_t << " " << outputfile_mp4;
-        system(command_ss.str().c_str());
+        string command = command_ss.str();
+        int result = system(command.c_str());
+        if (result != 0) {
+            cerr << "Error: Command execution failed with status code " << result << endl;
+            return result;
+        }
     }
 
 

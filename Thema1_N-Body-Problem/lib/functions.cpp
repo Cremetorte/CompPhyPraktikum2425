@@ -40,7 +40,7 @@ double scalar_product(const vector<double>& v_1, const vector<double>& v_2) {
     return scalar;
 }
 
-vector<double> scalar_multiplication(double c, vector<double> vec) {
+vector<double> scalar_multiplication(const double& c, const vector<double>& vec) {
     vector<double> final_vec;
     
     for (int i = 0; i < vec.size(); i++) {
@@ -51,23 +51,23 @@ vector<double> scalar_multiplication(double c, vector<double> vec) {
 
 }
 
-vector<double> subtract_vectors(vector<double> v_1, vector<double> v_2) {
-    v_2 = scalar_multiplication(-1, v_2);
-    return add_vectors(v_1,v_2);
+vector<double> subtract_vectors(const vector<double>& v_1, const vector<double>& v_2) {
+    vector<double> res = scalar_multiplication(-1, v_2);
+    return add_vectors(v_1,res);
 
 }
 
-vector<double> extract_position(vector<double> raw_data_row) {
+vector<double> extract_position(const vector<double>& raw_data_row) {
     vector<double> final_vec = {raw_data_row[0], raw_data_row[1], raw_data_row[2]};
     return final_vec;
 }
 
-vector<double> extract_velocity(vector<double> raw_data_row) {
+vector<double> extract_velocity(const vector<double>& raw_data_row) {
     vector<double> final_vec = {raw_data_row[3], raw_data_row[4], raw_data_row[5]};
     return final_vec;
 }
 
-double absolute_value(vector<double> vec) {
+double absolute_value(const vector<double>& vec) {
     double abs = 0;
     for (double i : vec) {
         abs += i*i;
@@ -76,7 +76,7 @@ double absolute_value(vector<double> vec) {
 }
 
 
-vector<double> calc_COM(vector<vector<double>> data) {
+vector<double> calc_COM(const vector<vector<double>>& data) {
     vector<double> COM = {0,0,0};
 
     for (vector<double> particle_i : data) {

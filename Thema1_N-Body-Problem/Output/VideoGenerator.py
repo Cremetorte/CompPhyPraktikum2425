@@ -30,7 +30,7 @@ for i in range(N):
     particle_rs.append(particle_r)
 
 #setup animation
-fps = 60
+fps = 30
 fig = plt.figure()
 ax = fig.add_subplot(111, projection="3d")
 
@@ -62,12 +62,12 @@ def init():
 
 def update(frame):
     for i in range(N):
-        x, y, z = particle_rs[i][frame]
+        x, y, z = particle_rs[i][frame*2]
         scatterers[i]._offsets3d = ([x], [y], [z])
     return scatterers
 
 num_frames = int(data.shape[0]/N)
-ani = FuncAnimation(fig, update, frames=num_frames, init_func=init, blit=True, interval = 1000/fps)
+ani = FuncAnimation(fig, update, frames=int(num_frames/2), init_func=init, blit=True, interval = 1000/fps)
 
 print("Starting to write mp4 file. This could take some time.")
 ani.save(output_filename, writer="ffmpeg")

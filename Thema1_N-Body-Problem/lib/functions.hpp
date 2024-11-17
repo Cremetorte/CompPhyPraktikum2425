@@ -11,12 +11,12 @@ using namespace std;
 // declare the functions here
 vector<double> add_vectors(const vector<double>& v_1, const vector<double>& v_2);
 double scalar_product(const vector<double>& v_1, const vector<double>& v_2);
-vector<double> scalar_multiplication(double c, vector<double> vec);
-vector<double> subtract_vectors(vector<double> v_1, vector<double> v_2);
-vector<double> extract_position(vector<double> raw_data_row);
-vector<double> extract_velocity(vector<double> raw_data_row);
-double absolute_value(vector<double> vec);
-vector<double> calc_COM(vector<vector<double>> data);
+vector<double> scalar_multiplication(const double& c, const vector<double>& vec);
+vector<double> subtract_vectors(const vector<double>& v_1, const vector<double>& v_2);
+vector<double> extract_position(const vector<double>& raw_data_row);
+vector<double> extract_velocity(const vector<double>& raw_data_row);
+double absolute_value(const vector<double>& vec);
+vector<double> calc_COM(const vector<vector<double>>& data);
 void print_Vector(vector<double> vec);
 vector<vector<double>> zero_2d_arr(int rows, int cols);
 vector<double> dimensions(vector<vector<double>> double_vector);
