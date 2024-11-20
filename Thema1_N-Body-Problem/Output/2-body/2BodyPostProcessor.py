@@ -19,6 +19,11 @@ else:
     filename = f"2Body_{integrator}_{delta_t}.csv"
     print(f"Starting post-processing of file {filename}. Parameters: N = 2, delta_t = {delta_t}.")
 
+# handle integrator cases
+integrators = ["euler", "euler-cromer", "velocity_verlet", "heun", "RK4", "hermite", "hermite-it"]
+if integrator not in integrators:
+    raise ValueError(f"Integrator {integrator} not recognized. Please choose from {integrators}.")
+
 
 epsilon = 1e-10 # to avoid division by zero and log(0) errors
 
