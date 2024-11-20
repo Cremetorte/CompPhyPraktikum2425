@@ -42,13 +42,13 @@ int main(int argc, char* argv[]) {
     {
         integrator = RK4_field;
     }
-    else if (string(argv[1]) == "velocity-verlet")
+    else if (string(argv[1]) == "velocity_verlet")
     {
         integrator = velocity_verlet;
     }
     else {
         cout << "Integrator has to be one of the following:" << endl;
-        cout << "euler\neuler-cromer\nvelocity-verlet\nhermite\nhermite-it\nheun\nRK4" << endl; 
+        cout << "euler\neuler-cromer\nvelocity_verlet\nhermite\nhermite-it\nheun\nRK4" << endl; 
         return -1;
     }
     
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
     inputfile_ss << "Input/" << N << "body.csv";
     string inputfile = inputfile_ss.str();
     stringstream outputfile_ss;
-    outputfile_ss << "Output/" << N << "-body/" << N << "Body_" << string(argv[1]) << ".csv";
+    outputfile_ss << "Output/" << N << "-body/" << N << "Body_" << string(argv[1]) << "_" << delta_t << ".csv";
     string outputfile = outputfile_ss.str();
 
 
