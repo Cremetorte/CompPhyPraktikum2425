@@ -8,7 +8,7 @@ from matplotlib.animation import FuncAnimation
 matplotlib.use('Agg')
 plt.style.use('seaborn-v0_8-darkgrid')
 
-# ------------------------ Console arguments ------------------------
+# ------------------------ Console arguments & Setup ------------------------
 #get console arguments (without sys.argv[0] which is the file name)
 cmd_args = sys.argv[1::]
 
@@ -49,7 +49,7 @@ def import_data(integrator, delta_t):
 
 
 
-# ------------------------ Def helping funtions --------------------------------
+# ----------------------------- Def helping funtions --------------------------------
 
 def get_r(particle):
     return particle[:, 0:3]
@@ -65,7 +65,7 @@ def logarithmizer(quantity, times):
 
 
 
-# ------------------------ Def functions for quantities ------------------------
+# ----------------------------- Def functions for quantities -----------------------------
 
 # 1. Energie
 def energy(data,t_list):
@@ -100,12 +100,7 @@ def energy(data,t_list):
 
     energy_tot = energy_1 + energy_2
 
-    # Ensure no division by zero and log(0) errors
-    energy_tot_0 = energy_tot[0]
-    energy_tot_log = np.abs((energy_tot - energy_tot_0) / (energy_tot_0))[1:-1:]
-    energy_tot_log = np.log10(energy_tot_log)
-
-    return (energy_tot_log, t_list[1:-1:])
+    return logarithmizer(energy_tot, t_list)
 
 
 # 2. Specific angular momentum
@@ -172,7 +167,7 @@ def a(data, t_list):
 
 
 
-# --------------------- Plotting -------------------
+# ---------------------------------- Plotting ------------------------------------
 
 def gen_plots(integrator_list, delta_t):
     data_dict = {}
