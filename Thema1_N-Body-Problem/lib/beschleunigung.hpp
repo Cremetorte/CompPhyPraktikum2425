@@ -1,10 +1,10 @@
 #ifndef BESCHLEUNIGUNG_HPP
 #define BESCHLEUNIGUNG_HPP
 
-#include <iostream>
+
 #include <vector>
-#include <string>
-#include "beschleunigung.cpp"
+#include <functional>
+
 using namespace std;
 
 

@@ -2,9 +2,7 @@
 #define FUNCTIONS_HPP
 
 #include <vector>
-#include <iostream>
-#include <math.h>
-#include "functions.cpp"
+
 using namespace std;
 
 

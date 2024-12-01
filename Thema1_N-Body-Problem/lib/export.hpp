@@ -1,12 +1,7 @@
 #ifndef EXPORT_HPP 
 #define EXPORT_HPP
 
-#include "import.hpp"
-#include "functions.hpp"
-#include "export.cpp"
-#include <iostream>
-#include <fstream>
-#include <sstream>
+
 #include <vector>
 #include <string>
 

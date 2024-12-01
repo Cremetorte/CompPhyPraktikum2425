@@ -30,10 +30,10 @@ int main(int argc, char* argv[]) {
     {
         integrator = euler_cromer;
     }
-    // else if (string(argv[1]) == "hermite")
-    // {
-    //     integrator = hermite;
-    // }
+    else if (string(argv[1]) == "hermite")
+    {
+        integrator = hermite;
+    }
     else if (string(argv[1]) == "heun")
     {
         integrator = heun;

@@ -2,9 +2,7 @@
 #define HEUN_HPP
 
 #include <vector>
-#include "functions.hpp"
-#include "beschleunigung.hpp"
-#include "heun.cpp"
+
 using namespace std;
 
 

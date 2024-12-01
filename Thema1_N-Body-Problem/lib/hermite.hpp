@@ -1,13 +1,7 @@
 #ifndef HERMITE_HPP
 #define HERMITE_HPP
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
-#include <string>
-#include "hermite.cpp"
-
 using namespace std;
 
 

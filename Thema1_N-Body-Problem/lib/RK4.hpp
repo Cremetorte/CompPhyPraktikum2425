@@ -2,10 +2,6 @@
 #define RK4_HPP
 
 #include <vector>
-#include <functional>
-#include "functions.hpp"
-#include "beschleunigung.hpp"
-#include "RK4.cpp"
 using namespace std;
 
 

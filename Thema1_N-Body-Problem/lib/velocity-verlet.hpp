@@ -2,9 +2,6 @@
 #define VELOCITY_VERLET_HPP
 
 #include <vector>
-#include "functions.hpp"
-#include "beschleunigung.hpp"
-#include "velocity-verlet.cpp"
 using namespace std;
 
 
