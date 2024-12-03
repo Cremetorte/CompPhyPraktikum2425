@@ -181,7 +181,7 @@ def gen_plots(integrator_list, delta_t, suffix = ""):
     fig, axs = plt.subplots(4)
     fig.suptitle(f"Erhaltungsgrößen der Integratoren bei $\\Delta t = {delta_t}$")
     fig.tight_layout()
-    fig.set_size_inches(20*cm, 40*cm)  # Increase the height to make the plots taller
+    fig.set_size_inches(25*cm, 40*cm)  # Increase the height to make the plots taller
 
 
     #Energie
