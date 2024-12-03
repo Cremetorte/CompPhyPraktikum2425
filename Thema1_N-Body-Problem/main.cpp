@@ -34,6 +34,10 @@ int main(int argc, char* argv[]) {
     {
         integrator = hermite;
     }
+    else if (string(argv[1]) == "hermite")
+    {
+        integrator = hermite;
+    }
     else if (string(argv[1]) == "heun")
     {
         integrator = heun;
