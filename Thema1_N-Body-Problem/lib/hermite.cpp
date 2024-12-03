@@ -52,7 +52,7 @@ vector<vector<double>> hermite(vector<vector<double>> table, double delta_t, int
     for (int i = 0; i<N; i++) {
         vector<double> new_vel_p = {0,0,0};
 
-        new_vel_p = v_n[i] + delta_t * a_n[i] + 1/2 * (delta_t * delta_t)*j_n[i];
+        new_vel_p = v_n[i] + delta_t * a_n[i] + 1.0/2 * (delta_t * delta_t)*j_n[i];
 
         vp_n_1.push_back(new_vel_p);
     }
@@ -61,7 +61,7 @@ vector<vector<double>> hermite(vector<vector<double>> table, double delta_t, int
     for (int i = 0; i<N; i++) {
         vector<double> new_pos_p = {0,0,0};
 
-        new_pos_p = r_n[i] + delta_t * v_n[i] + 1/2 * (delta_t * delta_t)*a_n[i] + 1/6*(delta_t*delta_t*delta_t)*j_n[i];
+        new_pos_p = r_n[i] + delta_t * v_n[i] + 1.0/2 * (delta_t * delta_t)*a_n[i] + 1.0/6*(delta_t*delta_t*delta_t)*j_n[i];
 
         rp_n_1.push_back(new_pos_p);
     }
@@ -117,7 +117,7 @@ vector<vector<double>> hermite(vector<vector<double>> table, double delta_t, int
     for (int i = 0; i<N; i++) {
         vector<double> new_vel_c = {0,0,0};
 
-        new_vel_c = vp_n_1[i] + 1/6*pow(delta_t,3) * a2_n[i] + 1/24 *pow(delta_t,4)*a3_n[i];
+        new_vel_c = vp_n_1[i] + 1.0/6*pow(delta_t,3) * a2_n[i] + 1.0/24 *pow(delta_t,4)*a3_n[i];
 
         vc_n_1.push_back(new_vel_c);
     }
@@ -126,7 +126,7 @@ vector<vector<double>> hermite(vector<vector<double>> table, double delta_t, int
     for (int i = 0; i<N; i++) {
         vector<double> new_pos_c = {0,0,0};
 
-        new_pos_c = rp_n_1[i] + 1/24*pow(delta_t,4) * a2_n[i] + 1/120*pow(delta_t,5)*a3_n[i];
+        new_pos_c = rp_n_1[i] + 1.0/24*pow(delta_t,4) * a2_n[i] + 1.0/120*pow(delta_t,5)*a3_n[i];
 
         rc_n_1.push_back(new_pos_c);
     }

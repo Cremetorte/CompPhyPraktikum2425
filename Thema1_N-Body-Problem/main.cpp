@@ -11,6 +11,7 @@
 #include "lib/heun.hpp"
 #include "lib/RK4.hpp"
 #include "lib/velocity-verlet.hpp"
+#include "lib/hermite_iteriert.hpp"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -34,9 +35,9 @@ int main(int argc, char* argv[]) {
     {
         integrator = hermite;
     }
-    else if (string(argv[1]) == "hermite")
+    else if (string(argv[1]) == "hermite_it")
     {
-        integrator = hermite;
+        integrator = hermite_iteriert;
     }
     else if (string(argv[1]) == "heun")
     {
@@ -52,7 +53,7 @@ int main(int argc, char* argv[]) {
     }
     else {
         cout << "Integrator has to be one of the following:" << endl;
-        cout << "euler\neuler-cromer\nvelocity_verlet\nhermite\nhermite-it\nheun\nRK4" << endl; 
+        cout << "euler\neuler-cromer\nvelocity_verlet\nhermite\nhermite_it\nheun\nRK4" << endl; 
         return -1;
     }
     

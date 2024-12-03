@@ -25,10 +25,9 @@ else:
 
 
 # handle integrator cases
-integrators = ["euler", "euler-cromer", "velocity_verlet", "heun", "RK4"] #, "hermite", "hermite-it"]  <--- not yet implemented
-
-
-# epsilon = 1e-10 # to avoid division by zero and log(0) errors
+integrators = ["euler", "euler-cromer", "velocity_verlet", "heun", "RK4", "hermite", "hermite_it"]  
+symp_int = ["euler-cromer", "velocity_verlet", "hermite"]
+non_symp_int = ["euler", "heun", "RK4",  "hermite_it"]
 
 
 #------------------------ Import & process data ------------------------
@@ -169,7 +168,10 @@ def a(data, t_list):
 
 # ---------------------------------- Plotting ------------------------------------
 
-def gen_plots(integrator_list, delta_t):
+def gen_plots(integrator_list, delta_t, suffix = ""):
+
+    linestyle_list = ["-", "--", "-.", ":", "."]
+
     data_dict = {}
     for i in integrator_list:
         data_dict[i] = import_data(i, delta_t)
@@ -179,7 +181,7 @@ def gen_plots(integrator_list, delta_t):
     fig, axs = plt.subplots(4)
     fig.suptitle(f"Erhaltungsgrößen der Integratoren bei $\\Delta t = {delta_t}$")
     fig.tight_layout()
-    fig.set_size_inches(20*cm, 30*cm)  # Increase the height to make the plots taller
+    fig.set_size_inches(20*cm, 40*cm)  # Increase the height to make the plots taller
 
 
     #Energie
@@ -187,9 +189,9 @@ def gen_plots(integrator_list, delta_t):
     axs[0].set_xlabel("Zeit $t$")
     axs[0].set_ylabel(r"$log\left(\frac{|E_{tot}-E_{tot}(0)|}{E_{tot}(0)}\right)$")
 
-    for i in integrator_list:
+    for idx, i in enumerate(integrator_list):
         x,t = energy(data_dict[i][0], data_dict[i][1])
-        axs[0].plot(t,x, label = f"Integrator: {i}")
+        axs[0].plot(t,x, linestyle_list[idx], label = f"Integrator: {i}")
     
     axs[0].legend()
 
@@ -199,9 +201,9 @@ def gen_plots(integrator_list, delta_t):
     axs[1].set_xlabel("Zeit $t$")
     axs[1].set_ylabel(r"$log\left(\frac{||j|_{tot}-|j|(0)|}{|j|_{tot}(0)}\right)$")
 
-    for i in integrator_list:
+    for idx, i in enumerate(integrator_list):
         x,t = spec_ang_mom(data_dict[i][0], data_dict[i][1])
-        axs[1].plot(t,x, label = f"Integrator: {i}")
+        axs[1].plot(t,x, linestyle_list[idx], label = f"Integrator: {i}")
 
     axs[1].legend()
 
@@ -211,9 +213,9 @@ def gen_plots(integrator_list, delta_t):
     axs[2].set_xlabel("Zeit $t$")
     axs[2].set_ylabel(r"$log\left(\frac{||e|_{tot}-|e|_{tot}(0)|}{|e|_{tot}(0)}\right)$")
     
-    for i in integrator_list:
+    for idx, i in enumerate(integrator_list):
         x,t = ecc(data_dict[i][0], data_dict[i][1])
-        axs[2].plot(t,x, label = f"Integrator: {i}")
+        axs[2].plot(t,x, linestyle_list[idx], label = f"Integrator: {i}")
     
     axs[2].legend()
 
@@ -222,17 +224,19 @@ def gen_plots(integrator_list, delta_t):
     axs[3].set_xlabel("Zeit $t$")
     axs[3].set_ylabel(r"$log\left(\frac{|a_{tot}-a_{tot}(0)|}{a_{tot}(0)}\right)$")
 
-    for i in integrator_list:
+    for idx, i in enumerate(integrator_list):
         x,t = a(data_dict[i][0], data_dict[i][1])
-        axs[3].plot(t,x, label = f"Integrator: {i}")
+        axs[3].plot(t,x, linestyle_list[idx], label = f"Integrator: {i}")
     
     axs[3].legend()
 
     plt.tight_layout()
-    plt.savefig(f"plots_{delta_t}.png", dpi = 300)
+    plt.savefig(f"plots_{delta_t}{suffix}.png", dpi = 300)
 
 
 
 
 # -------------------- "Main" ----------------------------
-gen_plots(integrators, delta_t)
+gen_plots(symp_int, delta_t, "_symplectic")
+gen_plots(non_symp_int, delta_t, "_non_symplectic")
+# gen_plots(["hermite_it"], delta_t, "RK4, Heun")

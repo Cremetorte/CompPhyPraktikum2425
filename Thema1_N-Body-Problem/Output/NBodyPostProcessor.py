@@ -24,7 +24,7 @@ else:
 
 
 # handle integrator cases
-integrators = ["euler", "euler-cromer", "velocity_verlet", "heun", "RK4"] #, "hermite", "hermite-it"]  <--- not yet implemented
+integrators = ["euler", "euler-cromer", "velocity_verlet", "heun", "RK4", "hermite", "hermite_it"]  # <--- not yet implemented
 
 
 #------------------------ Import & process data ------------------------
