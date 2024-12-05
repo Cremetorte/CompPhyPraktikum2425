@@ -132,9 +132,24 @@ def ecc(data, t_list):
 
     e = np.zeros_like(t_list)
     for t in range(len(t_list)):
-        e[t] = np.linalg.norm(np.cross(v, np.cross(r[t], v[t])) - r/(np.linalg.norm(r)**2))
+        e[t] = np.linalg.norm(np.cross(v, np.cross(r[t], v[t])) - r/(np.linalg.norm(r[t])**2))
     
     return logarithmizer(e, t_list)
+
+def ecc_0(data):
+    r_1 = data[0,0:3]
+    r_2 = data[1,0:3]
+    r = r_1 - r_2
+
+    v_1 = data[0,3:6]
+    v_2 = data[1,3:6]
+    v = v_1 - v_2
+
+
+
+    e = np.linalg.norm(np.cross(v, np.cross(r, v)) - r/(np.linalg.norm(r)**2))
+
+    return e
 
 
 # 4. Great major axis
@@ -170,7 +185,7 @@ def a(data, t_list):
 
 def gen_plots(integrator_list, delta_t, suffix = ""):
 
-    linestyle_list = ["-", "--", "-.", ":", "."]
+    linestyle_list = ["-", "--", "-.", ":", "-", "--", "-.", ":"]
 
     data_dict = {}
     for i in integrator_list:
@@ -178,8 +193,10 @@ def gen_plots(integrator_list, delta_t, suffix = ""):
 
     cm = 1/2.54  # cm <-> inch
 
+    ecc_0_c = ecc_0(data_dict[integrator_list[0]][0])
+
     fig, axs = plt.subplots(4)
-    fig.suptitle(f"Erhaltungsgrößen der Integratoren bei $\\Delta t = {delta_t}$")
+    fig.suptitle(f"Erhaltungsgrößen der Integratoren bei $\\Delta t = {delta_t}$ und $|\\vec e| = {ecc_0_c:.4E}$")
     fig.tight_layout()
     fig.set_size_inches(25*cm, 40*cm)  # Increase the height to make the plots taller
 
@@ -231,12 +248,12 @@ def gen_plots(integrator_list, delta_t, suffix = ""):
     axs[3].legend()
 
     plt.tight_layout()
-    plt.savefig(f"plots_{delta_t}{suffix}.png", dpi = 300)
+    plt.savefig(f"plots_{delta_t}{suffix}{ecc_0_c=}.png", dpi = 300)
 
 
 
 
 # -------------------- "Main" ----------------------------
-gen_plots(symp_int, delta_t, "_symplectic")
-gen_plots(non_symp_int, delta_t, "_non_symplectic")
-# gen_plots(["hermite_it"], delta_t, "RK4, Heun")
+# gen_plots(symp_int, delta_t, "_symplectic")
+# gen_plots(non_symp_int, delta_t, "_non_symplectic")
+gen_plots(integrators, delta_t, "all_ints")
