@@ -2,6 +2,9 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import matplotlib
+
+matplotlib.use("agg")
 
 #get console arguments (without sys.argv[0] which is the file name)
 cmd_args = sys.argv[1::]
