@@ -47,7 +47,7 @@ def n_0(s: int, l: int, rho: np.ndarray) -> float:
 def n_1_arr(l: int, rho: np.ndarray) -> np.ndarray:
     res = np.zeros_like(rho)
     wall1, wall2 = walls(rho.shape[0],l)
-    for i in range(wall1, wall2):
+    for i in range(wall1, rho.shape[0]):
         
         res[i] = n_1(i, l, rho)
     return res
@@ -56,7 +56,7 @@ def n_1_arr(l: int, rho: np.ndarray) -> np.ndarray:
 def n_0_arr(l: int, rho: np.ndarray) -> np.ndarray:
     res = np.zeros_like(rho)
     wall1, wall2 = walls(rho.shape[0],l)
-    for i in range(wall1, wall2):
+    for i in range(wall1, rho.shape[0]):
 
         res[i] = n_0(i, l, rho)
     return res
