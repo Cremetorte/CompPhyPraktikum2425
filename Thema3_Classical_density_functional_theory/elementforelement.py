@@ -74,11 +74,12 @@ def mu_ex_eq(rho_0, l: int, beta: float = 1):
             )
 
 @cond_njit
-def mu_id(rho: np.ndarray, l: int, beta: float = 1) -> np.ndarray:
+def mu_id_ex(rho_0: float, l: int, beta: float = 1) -> np.ndarray:
     
-    return np.where(
-        rho == 0, 0,
-        1/beta* (np.log(rho))
+    return 1/beta * (
+        np.log(rho_0)
+        - l * np.log(1 - l*rho_0)
+        + (l - 1) * np.log(1 - (l - 1)*rho_0)
     )
 
 @cond_njit
@@ -103,10 +104,12 @@ def exp_pot(rho: np.ndarray, l: int):
 
 
 @cond_njit
-def solve_rho(N: int, l: int, eta: float, beta: float = 1, epsilon = 10**(-14), compile: bool = False):
+def solve_rho(N: int, l: int, eta: float, beta: float = 1, compile: bool = False):
+    epsilon_per_lat_point: float = 1E-12    # mean epsilon/N
+    epsilon = epsilon_per_lat_point * N     # epsilon
     if compile:
         return None
-    
+
     if eta < 0.8:
         alpha = 0.1
         max_steps = 1000
@@ -114,11 +117,10 @@ def solve_rho(N: int, l: int, eta: float, beta: float = 1, epsilon = 10**(-14), 
         alpha = 0.01
         max_steps = 1000
         if l > 3:
-            alpha = 0.007
-            max_steps = 100000
+            alpha = 0.001
+            max_steps = 10000
 
     residual: float = 100
-            
 
 
     rho_i = initial_rho(N,l,eta)
@@ -126,25 +128,23 @@ def solve_rho(N: int, l: int, eta: float, beta: float = 1, epsilon = 10**(-14), 
 
     mu = mu_homo_ex(eta/l, l, beta)
 
-    print("Beginning calculation using N = " + str(N) + ", l = " + str(l) + ", eta =  " + str(eta))
+    if not USE_NUMBA:
+        print("Beginning calculation using N = {}, l = {}, eta = {} ...".format(N, l, eta))
+    else:
+        print(f"Beginning caclulation ... ")
 
     step = 0
     while True:
-        
-
 
         rho_new = eta/l * np.exp(beta * (mu - mu_ex(rho_i, l, beta))) * pot
 
-        residual = float(np.sum(np.square(rho_new - rho_i)))
+        residual = np.sum(np.square(rho_new - rho_i))
 
         if residual < epsilon:
             break
 
         if not USE_NUMBA:
             print(f"\rCalculating step {step}. Residual = {residual}   ", end = "")
-        else:
-            if step % 100 == 0:
-                print("Calculating step " + str(step) + ". Residual = " + f"{float(residual)}")
 
         rho_i = (1-alpha) * rho_i + alpha * rho_new
 
@@ -154,7 +154,11 @@ def solve_rho(N: int, l: int, eta: float, beta: float = 1, epsilon = 10**(-14), 
             print("\nProcess did not converge after " + str(step) + " steps")
             break
 
-    print("Finished calculation after " + str(step) + " steps. Resiudal = " + f"{str(residual)}" + ".")
+    if not USE_NUMBA:
+        print("Finished calculation after " + str(step) + " steps. Residual = " + str(residual) + ".")
+    else: 
+        print("Finished calculation after " + str(step) + " steps.")
+    print("")
 
     return rho_i
 
@@ -174,17 +178,22 @@ def grand_pot(rho: np.ndarray, l: int, beta: float = 1):
 
     rho_truc = rho[l:rho.shape[0]-l]
 
-    mu = mu_id(rho_truc, l, beta) + mu_ex(rho_truc, l, beta)
+    rho_0 = rho[int(rho.shape[0]/2)]
+
+    # mu = mu_id(rho_truc, l, beta) + mu_ex(rho_truc, l, beta)
+
+    mu = mu_id_ex(rho_0, l, beta) 
     
-    sum = np.sum(-1*mu*rho_truc)
+    sum = -mu*np.sum(rho_truc)
 
     return f_e + sum
 
-def surface_tension(rho: np.ndarray, l: int, beta: float = 1) -> float:
+def surface_tension(rho: np.ndarray, l: int, eta: float, beta: float = 1) -> float:
     eq_grand_pot = grand_pot(rho, l, beta)
+    rho_0 = eta/l
 
     rho_0_arr = np.zeros_like(rho)
-    rho_0_arr[l:rho.shape[0]-l] += rho[int(rho.shape[0]/2)]
+    rho_0_arr[l:rho.shape[0]-l] += rho_0
 
     homo_grand_pot = grand_pot(rho_0_arr, l, beta)
 
@@ -193,10 +202,10 @@ def surface_tension(rho: np.ndarray, l: int, beta: float = 1) -> float:
 def p(rho_0: float, l: int, beta: float = 1):
     return 1/beta * np.log(1 + rho_0/(1-l*rho_0))
 
-def surf_tension_homo(rho_0: float, l: int, beta: float = 1) -> float:
+def surf_tension_ana(rho_0: float, l: int, beta: float = 1) -> float:
     part_1 = mu_ex_eq(rho_0, l, beta)
-    part_2 = -(2*l - 1) * p(rho_0, l, beta)
-    return 1/2 * (part_1 + part_2)
+    part_2 = (2*l - 1) * p(rho_0, l, beta)
+    return 0.5 * (part_1 - part_2)
      
     
 
