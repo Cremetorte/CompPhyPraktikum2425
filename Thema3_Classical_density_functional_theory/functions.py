@@ -1,21 +1,27 @@
 import numpy as np
 from numba import njit
-np.seterr(all='raise')
+np.seterr(all='raise')  # prevent log(0) errors without raising error
 import matplotlib
-matplotlib.use("agg")
+matplotlib.use("agg")   # use backend without gui to run on headless Linux
 import matplotlib.pyplot as plt
 
 
 # -------------------------------------------------------------------------------- Numba Setup
-USE_NUMBA = True
+# Change JIT Compilation for all functions
+use_numba = True    
+
+def set_numba(jit: bool) -> None:
+    use_numba = jit
+
 def cond_njit(func):
-    if USE_NUMBA:
+    if use_numba:
         return njit(func)
     else:
         return func
     
+# Precompile all necessary functions
 def precompile() -> None:
-    if not USE_NUMBA:
+    if not use_numba:
         print("Numba is not used")
     else:
         print("Precompiling functions ...")
@@ -39,12 +45,12 @@ def phi(n):
 
 @cond_njit
 def n_1(s: int, l: int, rho: np.ndarray) -> float:
-    rho_trunc: np.ndarray = rho[s-l+1: s+1]
+    rho_trunc: np.ndarray = rho[s-l+1 : s+1]
     return np.sum(rho_trunc)
 
 @cond_njit
 def n_0(s: int, l: int, rho: np.ndarray) -> float:
-    rho_trunc: np.ndarray = rho[s-l+1: s]
+    rho_trunc: np.ndarray = rho[s-l+1 : s]
     return np.sum(rho_trunc)
 
 
@@ -67,7 +73,7 @@ def mu_ex(rho: np.ndarray, l: int, beta: float = 1) -> np.ndarray:
 
     return 1/beta * res
 
-def mu_ex_eq(rho_0, l: int, beta: float = 1):
+def mu_ex_eq(rho_0: float, l: int, beta: float = 1):
     return 1/beta *(- l*np.log(1 - l*rho_0) 
             + (l - 1)*np.log(1-(l-1)*rho_0)
             )
@@ -126,7 +132,7 @@ def solve_rho(N: int, l: int, eta: float, beta: float = 1, compile: bool = False
 
     mu = mu_homo_ex(eta/l, l, beta)
 
-    if not USE_NUMBA:
+    if not use_numba:
         print("Beginning calculation using N = {}, l = {}, eta = {} ...".format(N, l, eta))
     else:
         print(f"Beginning caclulation ... ")
@@ -141,7 +147,7 @@ def solve_rho(N: int, l: int, eta: float, beta: float = 1, compile: bool = False
         if residual < epsilon:
             break
 
-        if not USE_NUMBA:
+        if not use_numba:
             print(f"\rCalculating step {step}. Residual = {residual}   ", end = "")
 
         rho_i = (1-alpha) * rho_i + alpha * rho_new
@@ -152,58 +158,13 @@ def solve_rho(N: int, l: int, eta: float, beta: float = 1, compile: bool = False
             print("\nProcess did not converge after " + str(step) + " steps")
             break
 
-    if not USE_NUMBA:
+    if not use_numba:
         print("Finished calculation after " + str(step) + " steps. Residual = " + str(residual) + ".")
     else: 
         print("Finished calculation after " + str(step) + " steps.")
     print("")
 
     return rho_i
-
-# ---------------------------------------------------------------------------------------- Surface Tension
-
-def free_energy(rho: np.ndarray, l: int, beta: float = 1):
-    rho_prime = rho[l:rho.shape[0]-l]
-    F_id = np.sum(rho_prime * (np.log(rho_prime) - 1))
-    
-    F_ex = 0
-    for i in range(rho.shape[0]):
-        F_ex += phi(n_1(i, l, rho)) - phi(n_0(i, l, rho))
-    return 1/beta * (F_id + F_ex)
-
-def grand_pot(rho: np.ndarray, l: int, beta: float = 1):
-    f_e = free_energy(rho,l,beta)
-
-    rho_truc = rho[l:rho.shape[0]-l]
-
-    rho_0 = rho[int(rho.shape[0]/2)]
-
-    # mu = mu_id(rho_truc, l, beta) + mu_ex(rho_truc, l, beta)
-
-    mu = mu_id_ex(rho_0, l, beta) 
-    
-    sum = -mu*np.sum(rho_truc)
-
-    return f_e + sum
-
-def surface_tension(rho: np.ndarray, l: int, eta: float, beta: float = 1) -> float:
-    eq_grand_pot = grand_pot(rho, l, beta)
-    rho_0 = eta/l
-
-    rho_0_arr = np.zeros_like(rho)
-    rho_0_arr[l:rho.shape[0]-l] += rho_0
-
-    homo_grand_pot = grand_pot(rho_0_arr, l, beta)
-
-    return eq_grand_pot - homo_grand_pot
-
-def p(rho_0: float, l: int, beta: float = 1):
-    return 1/beta * np.log(1 + rho_0/(1-l*rho_0))
-
-def surf_tension_ana(rho_0: float, l: int, beta: float = 1) -> float:
-    part_1 = mu_ex_eq(rho_0, l, beta)
-    part_2 = (2*l - 1) * p(rho_0, l, beta)
-    return 0.5 * (part_1 - part_2)
      
     
 

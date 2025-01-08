@@ -14,6 +14,7 @@ surface_tension = {}
 
 
 def run_all(jit = True):
+    funcs.use_numba = jit
     for l in l_list:
         for eta in eta_list:
             eta = round(eta, 1)
@@ -26,13 +27,8 @@ def run_all(jit = True):
     for i in surface_tension:
         print(f"{i}: numerically: {surface_tension[i][0]:.4e}, analytically: {surface_tension[i][1]:.4e}")
 
-def run_problematic():
-    eta = 0.9
-    l = 10
-    solved_rho = funcs.solve_rho(N,l,eta)
 
 
 if __name__ == "__main__":
-    funcs.precompile()
+    # funcs.precompile()
     run_all()
-    # run_problematic()

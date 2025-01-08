@@ -60,16 +60,21 @@ def grand_pot(rho: np.ndarray, l: int):
 
 
 
+def pressure(rho_0: float, l: int): 
+    return ln(1 - (l-1)*rho_0) - ln(1 - l*rho_0)
+
 def surf_tension_num(rho: np.ndarray, l: int):
     N = rho.shape[0]
     wall1, wall2 = (l, N-l)
     rho_0 = rho[int(N/2)]
 
+    N_free = wall2 - wall1 
+    grand_pot_hom = -pressure(rho_0, l) * N_free
 
-    rho_homo = np.zeros_like(rho)
-    rho_homo[wall1:wall2] = rho_0
+    # rho_homo = np.zeros_like(rho)
+    # rho_homo[wall1:wall2] = rho_0
 
-    return grand_pot(rho, l) - grand_pot(rho_homo, l)
+    return 0.5*(grand_pot(rho, l) - grand_pot_hom)
 
 
 def surf_tension_an(rho: np.ndarray, l: int):
