@@ -1,5 +1,16 @@
 import numpy as np
-import elementforelement as ee
+import functions as funcs
+
+# mu
+
+def mu(rho_0: float, l: int, beta: float = 1):
+    # rho_0 = eta/l
+
+    return 1/beta * (
+        np.log(rho_0)
+        - l * np.log(1 - rho_0*l)
+        + (l - 1) * np.log(1 - (l-1)*rho_0)
+    )
 
 # pressure
 def p(eta: float, l: int):
@@ -19,7 +30,7 @@ def free_energy(rho: np.ndarray, l: int, beta: float = 1):
 
     f_ex = 0
     for s in range(rho.shape[0]):
-        f_ex += ee.phi(ee.n_1(s, l, rho)) - ee.phi(ee.n_0(s, l, rho))
+        f_ex += funcs.phi(funcs.n_1(s, l, rho)) - funcs.phi(funcs.n_0(s, l, rho))
     
     return 1/beta * (f_id + f_ex)
 
@@ -31,10 +42,10 @@ def grand_pot_functional(rho: np.ndarray, l: int, eta: float, beta: float = 1):
     wall1 = l
     wall2 = rho.shape[0] - l
 
-    mu = ee.mu_homo_ex(eta/l, l, beta)
+    mu_p = mu(eta/l, l, beta)
     sum = 0
     for s in range(wall1, wall2+1):
-        sum -= mu*rho[s]
+        sum -= mu_p*rho[s]
 
     return F + sum
 
@@ -55,6 +66,11 @@ def mu_ex(eta: float, l: int, beta: float = 1):
                      + (l-1) * np.log(1 - (l-1)*rho_0))
 
 def surf_tension_anal(eta: float, l: int, beta: float = 1):
-    return 0.5 * (mu_ex(eta, l, beta) - (2*l - 1)*p(eta,l))
+    return 0.5 * (mu(eta/l, l, beta) - (2*l - 1)*p(eta,l))
 
- 
+def surf_tension_2(eta: float, l: int, beta:float = 1):
+    rho_0 = eta/l
+    return 0.5/beta * (
+        (l-1) * np.log(1-l*rho_0)
+        - l * np.log(1-(l-1)*rho_0)
+    )

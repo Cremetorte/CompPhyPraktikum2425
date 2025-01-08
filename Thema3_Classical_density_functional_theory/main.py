@@ -1,7 +1,8 @@
-import functions2 as funcs
-import elementforelement as ee
+
+import functions as funcs
 import numpy as np
 import auswertung as a
+import auswertung2 as a2
 
 # -------------------- Variables ------------------
 l_list = [3, 10]
@@ -17,21 +18,21 @@ def run_all(jit = True):
         for eta in eta_list:
             eta = round(eta, 1)
 
-            solved_rho = ee.solve_rho(N, l, eta)
-            # ee.plot_rho(solved_rho, l, f"{l=}_{eta=}.png")
-            # ee.plot_rho(solved_rho, l, f"{l=}_{eta=}.png")
-            surface_tension[f"{l=}_{eta=}"] = (a.surf_tension_num(solved_rho, l, eta), a.surf_tension_anal(eta,l))
+            solved_rho = funcs.solve_rho(N, l, eta)
+            # funcs.plot_rho(solved_rho, l, f"Output/{l=}_{eta=}.png")
+            
+            surface_tension[f"{l=}_{eta=}"] = (a2.surf_tension_num(solved_rho, l), a2.surf_tension_an(solved_rho,l))
 
     for i in surface_tension:
-        print(f"{i}: {surface_tension[i]}. frac = {surface_tension[i][0]/surface_tension[i][1]}")
+        print(f"{i}: numerically: {surface_tension[i][0]:.4e}, analytically: {surface_tension[i][1]:.4e}")
 
 def run_problematic():
     eta = 0.9
     l = 10
-    solved_rho = ee.solve_rho(N,l,eta)
+    solved_rho = funcs.solve_rho(N,l,eta)
 
 
 if __name__ == "__main__":
-    ee.precompile()
+    funcs.precompile()
     run_all()
     # run_problematic()
