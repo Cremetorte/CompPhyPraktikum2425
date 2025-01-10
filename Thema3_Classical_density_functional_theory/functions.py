@@ -5,6 +5,8 @@ import matplotlib
 matplotlib.use("agg")   # use backend without gui to run on headless Linux
 import matplotlib.pyplot as plt
 
+from tabulate import tabulate
+
 
 # -------------------------------------------------------------------------------- Numba Setup
 # Change JIT Compilation for all functions
@@ -119,7 +121,7 @@ def solve_rho(N: int, l: int, eta: float, beta: float = 1, compile: bool = False
         max_steps = 1000
     else: 
         alpha = 0.01
-        max_steps = 1000
+        max_steps = 10000
         if l > 3:
             alpha = 0.001
             max_steps = 100000
@@ -188,3 +190,22 @@ def plot_rho(rho: np.ndarray, l: int, filename: str) -> None:
 
     rho_trunc = rho[l:cutoff]
     plot_array(rho_trunc, filename)
+
+
+def plot_with_title(rho: np.ndarray, l: int, eta: float) -> None:
+    cutoff = 6*l
+
+    rho = rho[l:cutoff]
+
+    plt.clf()
+    N = rho.shape[0]
+    idx = np.arange(0,N,1)
+
+    plt.xlabel(r"Lattice point $s$")
+    plt.ylabel(r"Local equilibrium density $\rho_s$")
+    plt.title(f"{l = }, {eta = }")
+    plt.plot(idx, rho, f"")
+    plt.savefig(f"{l=}_{eta=}.png")
+
+# ----------------------------------------------------------------------------- Tabulate
+
