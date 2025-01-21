@@ -1,5 +1,8 @@
 #include <vector>
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -33,4 +36,35 @@ void printMatrix(const vector<vector<int>>& matrix) {
         }
         cout << "\n";
     }
+}
+
+void exportIntVecCSV(const vector<int> vec, string path_filename) {
+    cout << "\nAttemtring to write to " << path_filename << "..." << endl;
+    ofstream outputFile(path_filename);
+    
+
+    if (!outputFile.is_open()) {
+        cerr << "Error: Could not open file " << path_filename << endl;
+        return;
+    }
+
+    stringstream line;
+    // for (vector<double> row : data) {
+    //     line.str("");
+    //     for (int i = 0; i < row.size()-1; i++) {
+    //         line << setprecision(std::numeric_limits<double>::digits10 + 1) << row[i];
+    //         line << ",";
+    //     }
+    //     line << row[row.size()-1] << "\n";
+    //     outputFile << line.str();
+    // }
+    line.str("");
+    for (int i : vec) {
+        line << i << ",";
+    }
+    outputFile << line.str();
+
+    outputFile.close();
+
+    cout << "Finished writing CSV." << endl;
 }
