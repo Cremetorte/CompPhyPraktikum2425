@@ -12,4 +12,8 @@ def plot_array(x: np.ndarray, filename: str) -> None:
     plt.show()
 
 
-N_array = np
+N_array = np.loadtxt("TotalRods.csv", delimiter=',')
+S_array = np.loadtxt("diffRods.csv", delimiter=',')
+
+plot_array(N_array, "")
+plot_array(S_array, "")
