@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
+#include <cmath>
 #include "lib/functions.hpp"
 
 using namespace std;
@@ -16,14 +17,17 @@ int M = 64;
 int L = 8;
 
 // Zustandssume Z
-double Z = 0.56;
+double Z = 0.1;
 
 // Iteration steps
-long int totIt = 10000000;
+long int totIt = 4*pow(10,9);
 
 vector<vector<int>> horList;
 vector<vector<int>> verList;
 vector<vector<int>> occField(M, vector<int>(M, 0));  // OccField[i][j]; like matrix notation
+
+random_device rd;  
+mt19937 gen(rd());
 
 int periodicIndex(int index) {
     return (index % M + M) % M; // Handles negative indices as well
@@ -54,11 +58,10 @@ bool overlap(int i, int j, bool vertical) {
 
 void addRod(int M, int N, bool vertical) {
     if (!overlap(M,N,vertical)) {
-        vector<int> pos;
-        pos.push_back(M);
-        pos.push_back(N);
+        vector<int> pos = {M,N};
+        
         if (vertical) {
-            // add to horizontal rod list
+            // add to vertical rod list
             verList.push_back(pos);
 
             // add to Occupation Field
@@ -70,7 +73,7 @@ void addRod(int M, int N, bool vertical) {
 
         }
         else {
-            // add to vertical rod list
+            // add to horzontal rod list
             horList.push_back(pos);
 
             // add to Occupation Field
@@ -92,30 +95,38 @@ void addRod(int M, int N, bool vertical) {
 }
 
 bool delRod(int id, bool vertical) {
-    int m = verList[id][0];
-    int n = verList[id][1];
-
     if (vertical) {
+        if (id < 0 || id >= verList.size()) {
+            throw invalid_argument("Id is not in verList");
+        }
+        int m = verList[id][0];
+        int n = verList[id][1];
+
         // delete from Occupation Field
         int y;
-        for (int dy=0; dy<L; dy++) {
+        for (int dy = 0; dy < L; dy++) {
             y = periodicIndex(m - dy);
             occField[y][n] = 0;
         }
 
         // remove from vertical List
-        verList.erase(verList.begin()+id);
+        verList.erase(verList.begin() + id);
         return true;
-    }
-    else {
+    } else {
+        if (id < 0 || id >= horList.size()) {
+            throw invalid_argument("Id is not in horList");
+        }
+        int m = horList[id][0];
+        int n = horList[id][1];
+
         // remove from horizontal list
-        horList.erase(horList.begin()+id);
+        horList.erase(horList.begin() + id);
 
         // delete from Occupation Field
         int x;
-        for (int dx=0; dx<L; dx++) {
+        for (int dx = 0; dx < L; dx++) {
             x = periodicIndex(n + dx);
-            occField[m][x] = 1;
+            occField[m][x] = 0;
         }
 
         return true;
@@ -129,18 +140,14 @@ int N() {
 }
 
 int randomInt(int lower_bound, int upper_bound) {
-    random_device rd;  
-    mt19937 gen(rd()); 
-    uniform_real_distribution<> dis(lower_bound, upper_bound);
+    uniform_int_distribution<> dis(lower_bound, upper_bound);
 
     int res = dis(gen);
 
     return res;
 }
 
-double randomDouble(double lower_bound, double upper_bound) {
-    random_device rd;  
-    mt19937 gen(rd()); 
+double randomDouble(double lower_bound, double upper_bound) { 
     uniform_real_distribution<> dis(lower_bound, upper_bound);
 
     double res = dis(gen);
@@ -148,121 +155,40 @@ double randomDouble(double lower_bound, double upper_bound) {
     return res;
 }
 
-bool gcmcStep() {
-    int prob_ins_del = randomInt(0,1);
+void addRandomRod() {
+    int M = randomInt(0, M-1);
+    int N = randomInt(0, M-1);
 
-    if (prob_ins_del == 0) {
-        // Insert Rod
+    bool vertical = randomInt(0,1);
 
-        // random Position
-        int x = randomInt(0,M-1);
-        int y = randomInt(0,M-1);
+    if (!overlap(M,N,vertical)) {
+        addRod(M, N, vertical);
+    }    
+}
 
-        double prob_rot = randomInt(0,1);
-        if (prob_rot == 0) {
-            // Horizontal Rod
-            if (overlap(x,y,false)) {
-                return false;
-            }
-            else {
-                // create horizontal rod
-                double alpha_ins = 2*(double)M*M/(N()+1)*Z;
-                alpha_ins = min(1.0, alpha_ins);
-                double prob_ins = randomDouble(0,1);
-
-                if (prob_ins < alpha_ins){
-                    addRod(x,y, false);
-                }
-                return true;
-            } 
-        }
-        else{
-            // Horizontal Rod
-            if (overlap(x,y,true)) {
-                return false;
-            }
-            else {
-                // create horizontal rod
-                double alpha_ins = 2*(double)M*M/(N()+1)*Z;
-                alpha_ins = min(1.0, alpha_ins);
-                double prob_ins = randomDouble(0,1);
-
-                if (prob_ins < alpha_ins){
-                    addRod(x,y, true);
-                }
-                return true;
-            }
-        }
-    }
-    else { 
-        // Delete Rod
-        double alpha_del = (double)N()/2/M/M/Z;
-        alpha_del = min(1.0, alpha_del);
-        if (randomDouble(0,1) < alpha_del){
-            int random_rod = randomInt(0, N()-1);
-            if (random_rod <= verList.size()) {
-                delRod(random_rod, true);
-            }
-            else {
-                delRod(random_rod, false);
-            }
-            return true;
-        }
-        else {
-            return false;
-        }
+void deleteRandomRod() {
+    int id = randomInt(0, N()-1);
+    if (id < horList.size()) {
+        delRod(id, false);
+    } else {
+        delRod(id - horList.size(), true);
     }
 }
 
-bool gcmcStepGOTO() {
-    if (randomDouble(0,1) < 0.5) {
-        // delete Rod
-        double alpha_del = min(1.0, (double)N()/2/M/M/Z);
-        if (randomDouble(0,1) < alpha_del) {
-            goto removeRod;
-        }
-        else {
-            return false;
+void gcmcStep() {
+    if (randomInt(0,1) == 0) {
+        double alpha_ins = 2.0 * M * M / (N() + 1.0) * Z;
+        if (randomDouble(0,1) <= alpha_ins) {
+            addRandomRod();
         }
     }
     else {
-        //random orientation
-        bool vert = (randomDouble(0,1) < 0.5);
-
-        //random Position
-        int x = randomInt(0,M-1);      
-        int y = randomInt(0,M-1); 
-
-        //check for Collisions
-        if (overlap(x,y,vert)) {
-            return false;
+        double alpha_del = 1.0*N()/2/pow(M,2) * 1.0/Z;
+        if (randomDouble(0,1) <= alpha_del) {
+            deleteRandomRod;
         }
-
-        //add Rod
-        double alpha_ins = min(1.0, 2*(double)M*M/(N()+1)*Z);
-        if (randomDouble(0,1) < alpha_ins) {
-            addRod(x,y,vert);
-            return true;
-        }
-
     }
-
-
-    removeRod: 
-    {
-        int r_id = randomInt(0,N());
-        if (r_id < horList.size()) {
-            delRod(r_id, false);
-        }
-        else {
-            delRod(r_id-horList.size(), true);
-        }
-        return true;
-    }
-
 }
-
-
 
 
 int main(/*int argc, char* argv[]*/) {
@@ -271,8 +197,12 @@ int main(/*int argc, char* argv[]*/) {
     //     cout << "Wrong number of arguments! Usage: " << argv[0] << " integrator N delta_t t_max video?" << endl;
     //     return -1;
     // }
+
+
     vector<int> totalRods;
     vector<int> diffRods;
+    vector<int> horRods;
+    vector<int> verRods;
 
     cout << "Beginning calculation for z=" << Z << ", doing " << totIt << " iterations." << endl;
 
@@ -281,13 +211,15 @@ int main(/*int argc, char* argv[]*/) {
     
     for (long int it = 1; it<totIt; it++) {
         
-        gcmcStepGOTO();
+        gcmcStep();
 
         if (it%100 == 0) {
             totalRods.push_back(N());
             diffRods.push_back(horList.size() - verList.size());
+            horRods.push_back(horList.size());
+            verRods.push_back(verList.size());
         }
-        if (it%10000 == 0){
+        if (it%1000000 == 0){
             auto ittime = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<std::chrono::seconds>(ittime - start);
 
@@ -300,15 +232,20 @@ int main(/*int argc, char* argv[]*/) {
             int est_minutes = est_time / 60;
             int est_seconds = est_time % 60;
 
-            cout << "\rCalculated " << (double)it/totIt*100.0 << "\% of all steps. " 
-                << "Elapsed/Estimated time [min:s]: " << el_minutes << ":" << setw(2) << setfill('0') << el_seconds
-                << "/" << est_minutes << ":" << setw(2) << setfill('0') << est_seconds;
+            cout << "\rCalculated " << fixed << setprecision(2) << setw(5) << (double)it/totIt*100.0 << "% of all steps. ";
+            cout << "Elapsed/Estimated time [min:s]: " << el_minutes << ":" << setw(2) << setfill('0') << el_seconds;
+            cout << "/" << est_minutes << ":" << setw(2) << setfill('0') << setprecision(2) << est_seconds << "      ";
         }
 
     }
     cout << "\nfinished calculation";
     exportIntVecCSV(totalRods, "Output/TotalRods.csv");
     exportIntVecCSV(diffRods, "Output/diffRods.csv");
+    exportIntVecCSV(horRods, "Output/horRods.csv");
+    exportIntVecCSV(verRods, "Output/verRods.csv");
+
+
+    // printMatrix(occField);
 
     // addRod(2,2, true);
 
@@ -318,6 +255,22 @@ int main(/*int argc, char* argv[]*/) {
 
     // printMatrix(occField);
  
+    // int nr_ones = 0;
+    // int nr_zeros = 0;
+    // for (long int i=0; i<500000000; i++) {
+    //     if (randomInt(0,1) == 1) {
+    //         nr_ones++;
+    //     }
+    //     else {
+    //         nr_zeros++;
+    //     }
+    // }
+
+    // cout << "Ones: " << nr_ones << endl;
+    // cout << "Zeros: " << nr_zeros << endl;
+    // cout << "Est. prob of one: " << (double)nr_ones/(nr_ones+nr_zeros) << endl;
+
+
 
 
     return 0;

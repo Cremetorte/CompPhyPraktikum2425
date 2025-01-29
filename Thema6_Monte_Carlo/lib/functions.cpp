@@ -59,8 +59,11 @@ void exportIntVecCSV(const vector<int> vec, string path_filename) {
     //     outputFile << line.str();
     // }
     line.str("");
-    for (int i : vec) {
-        line << i << ",";
+    for (int i=0; i<vec.size(); i++) {
+        line << vec[i];
+        if (i != vec.size()-1) {
+            line << ",";
+        }
     }
     outputFile << line.str();
 
