@@ -56,9 +56,9 @@ bool overlap(int i, int j, bool vertical) {
     }
 }
 
-void addRod(int M, int N, bool vertical) {
-    if (!overlap(M,N,vertical)) {
-        vector<int> pos = {M,N};
+void addRod(int pos_M, int pos_N, bool vertical) {
+    if (!overlap(pos_M,pos_N,vertical)) {
+        vector<int> pos = {pos_M,pos_N};
         
         if (vertical) {
             // add to vertical rod list
@@ -67,8 +67,8 @@ void addRod(int M, int N, bool vertical) {
             // add to Occupation Field
             int y;
             for (int dy=0; dy<L; dy++) {
-                y = periodicIndex(M - dy);
-                occField[y][N] = 1;
+                y = periodicIndex(pos_M - dy);
+                occField[y][pos_N] = 1;
             }
 
         }
@@ -84,8 +84,8 @@ void addRod(int M, int N, bool vertical) {
             // }
             int x;
             for (int dx=0; dx<L; dx++) {
-                x = periodicIndex(N + dx);
-                occField[M][x] = 1;
+                x = periodicIndex(pos_N + dx);
+                occField[pos_M][x] = 1;
             }
         }
     } 
@@ -156,13 +156,13 @@ double randomDouble(double lower_bound, double upper_bound) {
 }
 
 void addRandomRod() {
-    int M = randomInt(0, M-1);
-    int N = randomInt(0, M-1);
+    int m = randomInt(0, M-1);
+    int n = randomInt(0, M-1);
 
     bool vertical = randomInt(0,1);
 
-    if (!overlap(M,N,vertical)) {
-        addRod(M, N, vertical);
+    if (!overlap(m,n,vertical)) {
+        addRod(m, n, vertical);
     }    
 }
 
@@ -185,7 +185,7 @@ void gcmcStep() {
     else {
         double alpha_del = 1.0*N()/2/pow(M,2) * 1.0/Z;
         if (randomDouble(0,1) <= alpha_del) {
-            deleteRandomRod;
+            deleteRandomRod();
         }
     }
 }

@@ -40,4 +40,5 @@ axs[1,0].set_title("Vertical")
 axs[1,1].hist(hor_arr, bins=200)
 axs[1,1].set_title("Horizontal")
 
-plt.savefig("histograms.png")
+# plt.savefig("histograms.png")
+plt.show()
