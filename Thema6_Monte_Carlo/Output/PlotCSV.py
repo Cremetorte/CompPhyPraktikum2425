@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use("agg")
+matplotlib.use("TkAgg")
 
 
 def plot_array(x: np.ndarray, filename: str) -> None:
@@ -31,13 +31,13 @@ print("Loaded arrays")
 
 fig, axs = plt.subplots(2,2)
 
-axs[0,0].hist(N_array, bins=200)
+axs[0,0].hist(N_array, bins=100)
 axs[0,0].set_title("N")
-axs[0,1].hist(S_array, bins=200)
+axs[0,1].hist(S_array, bins=100)
 axs[0,1].set_title("S")
-axs[1,0].hist(ver_arr, bins=200)
+axs[1,0].hist(ver_arr, bins=100)
 axs[1,0].set_title("Vertical")
-axs[1,1].hist(hor_arr, bins=200)
+axs[1,1].hist(hor_arr, bins=100)
 axs[1,1].set_title("Horizontal")
 
 # plt.savefig("histograms.png")

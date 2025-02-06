@@ -16,8 +16,8 @@ int M = 64;
 // Rod length L
 int L = 8;
 
-// Zustandssume Z
-double Z = 0.1;
+// // Zustandssume Z
+// double Z = 1.5;
 
 // Iteration steps
 long int totIt = 4*pow(10,9);
@@ -191,12 +191,13 @@ void gcmcStep() {
 }
 
 
-int main(/*int argc, char* argv[]*/) {
+int main(int argc, char* argv[]) {
     
-    // if (argc != 6) {
-    //     cout << "Wrong number of arguments! Usage: " << argv[0] << " integrator N delta_t t_max video?" << endl;
-    //     return -1;
-    // }
+    if (argc != 2) {
+        cout << "Wrong number of arguments! Usage: " << argv[0] << " Z" << endl;
+        return -1;
+    }
+    double Z = stod(argv[1]);
 
 
     vector<int> totalRods;
