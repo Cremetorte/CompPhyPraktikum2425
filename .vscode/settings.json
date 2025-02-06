@@ -48,5 +48,7 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "iomanip": "cpp"
-    }
+    },
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "off"
 }

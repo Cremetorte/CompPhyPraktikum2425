@@ -24,14 +24,15 @@ else:
 
 
 # handle integrator cases
-integrators = ["euler", "euler-cromer", "velocity_verlet", "heun", "RK4", "hermite", "hermite_it"]  # <--- not yet implemented
-
+integrators = ["euler", "euler-cromer", "velocity_verlet", "RK4", "hermite", "hermite_it"]  # <--- not yet implemented
+symp_int = ["euler-cromer", "hermite", "velocity_verlet"]
+non_symp_int = ["euler", "RK4", "hermite_it"]
 
 #------------------------ Import & process data ------------------------
 def input_filename(N, integrator, delta_t):
     return f"{N}-body/{N}Body_{integrator}_{delta_t}.csv"
-def output_filename(N, delta_t):
-    return f"{N}-body/plot_energy_{N}_{delta_t}.png"
+def output_filename(N, delta_t, suffix = ""):
+    return f"{N}-body/plot_energy_{N}_{delta_t}_{suffix}.png"
 
 #import data
 def import_data(N, integrator, delta_t):
@@ -81,7 +82,6 @@ def energy(data,t_list):
         m_i.append(particles[i][0, 6])
         energy_i.append(zero_like_t)
 
-    print(m_i)
 
     # # Extract r and v vectors
     # r_1 = get_r(particle1)
@@ -127,27 +127,31 @@ def energy(data,t_list):
 
 # ---------------------------------- Plotting ------------------------------------
 
-def gen_plots(integrator_list, delta_t):
+def gen_plots(integrator_list, delta_t, suffix = ""):
     data_dict = {}
+    linestyle_list = ["-", "--", "-.", ":", ".", "-", "--", "-.", ":", "."]
+
     for i in integrator_list:
         data_dict[i] = import_data(N, i, delta_t)
-
+    cm = 1/2.54
     fig, ax = plt.subplots()
     fig.suptitle(f"Energieerhaltung der Integratoren bei N = {N} und $\\Delta t = {delta_t}$")#
+    fig.set_size_inches(15*cm, 8*cm)
     
     ax.set_xlabel("Zeit $t$")
     ax.set_ylabel(r"$log\left(\frac{|E_{tot}-E_{tot}(0)|}{E_{tot}(0)}\right)$")
 
-    for i in integrator_list:
+    for idx, i in enumerate(integrator_list):
         E,t = energy(data_dict[i][0], data_dict[i][1])
-        ax.plot(t, E, label = f"Integrator: {i}")
+        ax.plot(t, E, linestyle_list[idx], label = f"Integrator: {i}")
     
     ax.legend()
 
     plt.tight_layout()
-    plt.savefig(output_filename(N, delta_t), dpi = 300)
+    plt.savefig(output_filename(N, delta_t, suffix), dpi = 300)
 
 
 
 # ---------------------------- "Main" -------------------------------
-gen_plots(integrators, delta_t)
+gen_plots(integrators, delta_t, suffix="all_ints")
+# gen_plots(non_symp_int, delta_t, suffix="non-symplectic")
