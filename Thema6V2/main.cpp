@@ -21,7 +21,7 @@ Output:
 using namespace std;
 
 const int latPoints = 64;
-long int total_it = 4 * pow(10, 9);
+long int total_it = 10 * pow(10, 9);
 
 int main(int argc, char* argv[]) {
     // ------------------------------------------------------------------------------------ Parse Arguments
@@ -43,6 +43,11 @@ int main(int argc, char* argv[]) {
     vector<vector<int>> verticalRods;
     int occupationField[latPoints][latPoints] = {0};
     vector<vector<double>> observations;
+
+    // thermalize
+    for (int i=0; i<1000; i++) {
+        gcmcStep(horizontalRods, verticalRods, occupationField, Z);
+    }
 
     // Start GCMC steps
     for (long int t = 1; t < total_it; t++) {
