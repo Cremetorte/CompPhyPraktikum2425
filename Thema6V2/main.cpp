@@ -21,7 +21,7 @@ Output:
 using namespace std;
 
 const int latPoints = 64;
-long int total_it = 1 * pow(10, 2);
+long int total_it = 1 * pow(10, 8);
 
 int main(int argc, char* argv[]) {
     // ------------------------------------------------------------------------------------ Parse Arguments
@@ -85,10 +85,10 @@ int main(int argc, char* argv[]) {
     exportObservablesToCSV(observations, filename);
 
 
-    exportMatrixToCSV(horizontalRods, "Output/horizontal.csv");
-    exportMatrixToCSV(verticalRods, "Output/vertical.csv");
+    // exportMatrixToCSV(horizontalRods, "Output/horizontal.csv");
+    // exportMatrixToCSV(verticalRods, "Output/vertical.csv");
 
-    print2dArray(occupationField);
+    // print2dArray(occupationField);
 
 
     return 1;

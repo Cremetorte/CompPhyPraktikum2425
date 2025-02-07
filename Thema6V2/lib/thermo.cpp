@@ -19,8 +19,8 @@ bool overlap(const int& i, const int& j, const bool& vertical, int (&occField)[l
     if (vertical) { // vertical rod
         int y;
         for (int dy = 0; dy < L; dy++) {
-            y = periodicIndex(i - dy, M); // use periodic indices
-            if (occField[y][j] != 0) {
+            y = periodicIndex(j + dy, M); // use periodic indices
+            if (occField[i][y] != 0) {
                 return true;
             }
         }
@@ -28,8 +28,8 @@ bool overlap(const int& i, const int& j, const bool& vertical, int (&occField)[l
     } else { // horizontal rod
         int x;
         for (int dx = 0; dx < L; dx++) {
-            x = periodicIndex(j + dx, M); // use periodic indices
-            if (occField[i][x] != 0) {
+            x = periodicIndex(i + dx, M); // use periodic indices
+            if (occField[x][j] != 0) {
                 return true;
             }
         }
@@ -52,9 +52,9 @@ bool addRod(const int& x, const int& y, const bool& vertical, vector<vector<int>
 
         // update occupation field
         int m;
-        for (int dx = 0; dx < L; dx++) {
-            m = periodicIndex(x - dx, M);
-            occField[m][y] = 1;
+        for (int dy = 0; dy < L; dy++) {
+            m = periodicIndex(y + dy, M);
+            occField[x][m] = 1;
         }
         
     } else {
@@ -63,9 +63,9 @@ bool addRod(const int& x, const int& y, const bool& vertical, vector<vector<int>
 
         // update occupation field
         int n;
-        for (int dy = 0; dy < L; dy++) {
-            n = periodicIndex(y + dy, M);
-            occField[x][n] = 1;
+        for (int dx = 0; dx < L; dx++) {
+            n = periodicIndex(x + dx, M);
+            occField[n][y] = 1;
         }
     }
     return true;
@@ -108,9 +108,9 @@ void delRod(int id, vector<vector<int>>& horList, vector<vector<int>>& verList, 
 
         // update occupation field
         int n;
-        for (int dy = 0; dy < L; dy++) {
-            n = periodicIndex(y + dy, M);
-            occField[x][n] = 0;
+        for (int dx = 0; dx < L; dx++) {
+            n = periodicIndex(x + dx, M);
+            occField[n][y] = 0;
         }    
 
     } else { // delete vertical rod
@@ -126,9 +126,9 @@ void delRod(int id, vector<vector<int>>& horList, vector<vector<int>>& verList, 
 
         // update occupation field
         int m;
-        for (int dx = 0; dx < L; dx++) {
-            m = periodicIndex(x - dx, M);
-            occField[m][y] = 0;
+        for (int dy = 0; dy < L; dy++) {
+            m = periodicIndex(y + dy, M);
+            occField[x][m] = 0;
         } 
     }
 }

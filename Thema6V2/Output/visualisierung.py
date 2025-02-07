@@ -7,20 +7,7 @@ horizontal.csv
 vertikal.csv
 mit Spalten: x,y
 
-Kommentare mit #
-
-L=8
-
-Koordinatensystem-Modi COORD_MODE:
-
-"matrix_like":
-    (0,0) oben rechts, (64,64) unten links
-    -> muss umgewandelt werden in ein kartesisches Koordinatensystem
-    (x,y) -> (x,64-y)
-    
-"cartesian":
-    (0,0) unten links, (64,64) oben rechts
-    -> muss nicht umgewandelt werden
+in CSV: Kommentare mit # erlaubt
 """
 
 import matplotlib.patches as patches
@@ -35,7 +22,6 @@ ROD_WIDTH = 1   # Rod width 1
 
 LATTICE_WIDTH = 64  # Lattice Width M
 
-COORD_MODE = "matrix_like"
 
 # --------------------------------------------------------------------------- load data
 print("Loading data")
@@ -43,10 +29,7 @@ hor_arr = np.loadtxt("horizontal.csv", delimiter=',')
 ver_arr = np.loadtxt("vertical.csv", delimiter=',')
 print("Data loaded")
 
-if COORD_MODE == "matrix_like":
-    print("Converting to cartesian coordinates")
-    hor_arr[:,1] = - hor_arr[:,1]
-    ver_arr[:,1] = - ver_arr[:,1]
+
 
 # --------------------------------------------------------------------------- prepare plot
 fig, axs = plt.subplots()
