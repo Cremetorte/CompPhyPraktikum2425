@@ -21,7 +21,7 @@ Output:
 using namespace std;
 
 const int latPoints = 64;
-long int total_it = 10 * pow(10, 9);
+long int total_it = 1 * pow(10, 2);
 
 int main(int argc, char* argv[]) {
     // ------------------------------------------------------------------------------------ Parse Arguments
@@ -79,10 +79,17 @@ int main(int argc, char* argv[]) {
     // ---------------------------------------------------------------------------- Export observables
     stringstream filename_ss;
     filename_ss.str("");
-    filename_ss << "Output/obs_z=" << setw(5) << setfill('0') << setprecision(5) << Z;
+    filename_ss << "Output/obs_z=" << setw(5) << setfill('0') << setprecision(5) << Z << ".csv";
     string filename = filename_ss.str();
 
     exportObservablesToCSV(observations, filename);
+
+
+    exportMatrixToCSV(horizontalRods, "Output/horizontal.csv");
+    exportMatrixToCSV(verticalRods, "Output/vertical.csv");
+
+    print2dArray(occupationField);
+
 
     return 1;
 }
