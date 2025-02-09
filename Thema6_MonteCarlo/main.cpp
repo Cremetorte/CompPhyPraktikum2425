@@ -78,6 +78,7 @@ int main(int argc, char* argv[]) {
             //     exportMatrixToCSV(horizontalRods, filenamehor);
             //     exportMatrixToCSV(verticalRods, filenamever);
             //     savedTwoPhase = true;
+            //     break;
             // }
         }
         if (t % 1000000 == 0 && OUTPUT) { // calculate elapsed time, estimate total time
