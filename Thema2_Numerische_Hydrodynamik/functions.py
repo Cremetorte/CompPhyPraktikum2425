@@ -6,7 +6,7 @@ def compute_delta_psi(psi, N, j):
     delta_psi = np.zeros(N+4)
     num = (psi[j+1] - psi[j]) * (psi[j] - psi[j-1])
     if num > 0:
-        delta_psi = 2*num / ((psi[j+1] - psi[j-1]) + 1e-8)
+        delta_psi = 2*num / ((psi[j+1] - psi[j-1]) + 1e-12)
     else:
         delta_psi = 0
     return delta_psi
@@ -43,7 +43,7 @@ def solve_advection(psi, N, dt, dx, T_end, a):
         F_m[N+3] = F_m[3]
 
         # Neues Psi (Gleichung 2.13)
-        for j in range(2, N+2):
+        for j in range(1, N+3):
             psi_new[j] = psi[j] - (dt/dx) * (F_m[j+1] - F_m[j])
 
 

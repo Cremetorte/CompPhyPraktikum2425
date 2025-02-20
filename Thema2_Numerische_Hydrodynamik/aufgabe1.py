@@ -10,8 +10,7 @@ N = 40
 dx = (xmax - xmin) / N
 sigma = 0.8
 dt = sigma * dx / a
-T_end = 4
-
+T_end = 4.0
 # staggered grid
 x_B = np.linspace(xmin + 0.5*dx, xmax - 0.5*dx, N, endpoint=False) # Zellmitten
 x_A = np.linspace(xmin, xmax, N+1) # Zellränder
@@ -50,7 +49,7 @@ psi_analytic = psi_0(periodic_shift(x, T_end))
 # Plot der Ergebnisse
 plt.figure(figsize=(16, 10))
 plt.plot(x_B, psi_final[2:N+2], label="Numerische Lösung", linestyle="--", linewidth=2)
-plt.plot(x, psi_analytic, label="Analytische Lösung", linestyle=":", linewidth=2)
+plt.plot(x_B, psi[2:N+2], label="Analytische Lösung", linestyle=":", linewidth=2)
 plt.xlabel("x", fontsize=16)
 plt.ylabel(f"$\Psi(x, t={T_end})$", fontsize=16)
 plt.title(f"Numerische vs. analytische Lösung der Advektionsgleichung mit $N={N}$", fontsize=18)
