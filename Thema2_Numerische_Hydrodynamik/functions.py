@@ -17,7 +17,12 @@ def solve_advection(psi, N, dt, dx, T_end, a):
     while t < T_end:
         psi_new = np.copy(psi)
         F_m = np.zeros(N+5)  # Massenfluss
-        #delta_psi = compute_delta_psi(psi, N)
+
+        # Periodische Randbedingungen
+        psi_new[0] = psi_new[N]
+        psi_new[1] = psi_new[N+1]
+        psi_new[N+2] = psi_new[2]
+        psi_new[N+3] = psi_new[3]
 
         # Erweitertes Upwind-Verfahren (Gleichung 2.15)
         for j in range(2, N+2):
@@ -31,15 +36,16 @@ def solve_advection(psi, N, dt, dx, T_end, a):
 
             F_m[j] = u_j * psi_adv  # Gleichung 2.14
 
+        # Periodische Randbedingungen
+        F_m[0] = F_m[N]
+        F_m[1] = F_m[N+1]
+        F_m[N+2] = F_m[2]
+        F_m[N+3] = F_m[3]
+
         # Neues Psi (Gleichung 2.13)
         for j in range(2, N+2):
             psi_new[j] = psi[j] - (dt/dx) * (F_m[j+1] - F_m[j])
 
-        # Periodische Randbedingungen
-        psi_new[0] = psi_new[N]
-        psi_new[1] = psi_new[N+1]
-        psi_new[N+2] = psi_new[2]
-        psi_new[N+3] = psi_new[3]
 
         psi = psi_new
         t += dt
