@@ -82,9 +82,8 @@ def solve_shock_tube(rho, u, epsilon, N, dt, dx, T_end, gamma):
             u_new[j] = (u[j] * rho_mean[j] - dt/dx * (F_i[j] - F_i[j-1])) / rho_mean_new[j]
             epsilon_new[j] = (epsilon[j] * rho[j] - dt/dx * (F_e[j+1] - F_e[j])) / rho_new[j]
 
-        # Kräfte, Druckarbeit, Temperatur
+        # Kräfte, Druckarbeit
         p_new = (gamma - 1) * rho_new * epsilon_new
-        T_new = (gamma - 1) * epsilon_new
         for j in range(2, N+2):
             u_new[j] -= dt/dx * (p_new[j] - p_new[j-1]) / rho_mean_new[j]
             epsilon_new[j] -= dt/dx * p_new[j]/rho_new[j] * (u_new[j+1] - u_new[j])
