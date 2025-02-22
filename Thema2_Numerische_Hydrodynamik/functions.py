@@ -1,6 +1,7 @@
 import numpy as np
 
-# Aufgabe 1.2
+# Aufgabe 1
+
 # Berechnung von Delta rho bzw. Delta psi (Gleichung 2.16)
 def compute_delta_psi(psi, N, j):
     delta_psi = np.zeros(N+4)
@@ -12,7 +13,7 @@ def compute_delta_psi(psi, N, j):
     return delta_psi
 
 # Lösung der Advektionsgleichung
-def solve_advection(psi, N, dt, dx, T_end, a):
+def solve_advection(psi, N, dt, dx, T_end, u):
     t = 0
     while t < T_end:
         psi_new = np.copy(psi)
@@ -26,15 +27,14 @@ def solve_advection(psi, N, dt, dx, T_end, a):
 
         # Erweitertes Upwind-Verfahren (Gleichung 2.15)
         for j in range(2, N+2):
-            u_j = a
-            if u_j > 0:
+            if u[j] > 0:
                 delta_psi_j_1 = compute_delta_psi(psi, N, j-1)
-                psi_adv = psi[j-1] + 0.5 * (1 - u_j * dt/dx) * delta_psi_j_1
+                psi_adv = psi[j-1] + 0.5 * (1 - u[j] * dt/dx) * delta_psi_j_1
             else:
                 delta_psi_j = compute_delta_psi(psi, N, j)
-                psi_adv = psi[j] - 0.5 * (1 + u_j * dt/dx) * delta_psi_j
+                psi_adv = psi[j] - 0.5 * (1 + u[j] * dt/dx) * delta_psi_j
 
-            F_m[j] = u_j * psi_adv  # Gleichung 2.14
+            F_m[j] = u[j] * psi_adv  # Gleichung 2.14
 
         # Periodische Randbedingungen
         F_m[0] = F_m[N]
