@@ -30,11 +30,10 @@ epsilon[:N//2+2] = 2.5
 epsilon[N//2+2] = 2.0
 
 # Berechnung der Lösung des Stoßrohrs
-rho_final, u_final, epsilon_final = functions2.solve_shock_tube(rho, u, epsilon, N, dt, dx, T_end, gamma)
-p_final = (gamma - 1) * rho_final * epsilon_final
+rho_final, u_final, epsilon_final, p_final = functions2.solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma)
 T_final = (gamma - 1) * epsilon_final
 
-# **Plot der Ergebnisse**
+# Plot der Ergebnisse
 plt.figure(figsize=(12, 6))
 plt.plot(x_B, rho_final[2:N+2], label="Dichte", linewidth=2)
 plt.plot(x_B, u_final[2:N+2], label="Geschwindigkeit", linewidth=2)
