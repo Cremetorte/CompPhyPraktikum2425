@@ -25,8 +25,9 @@ psi[2:N+2] = np.where(np.abs(x_B) <= 1./3, 1.0, 0.0)
 # Start der Rechenzeit
 start_time = time.time()
     
-# Berechnung für t=4
-psi_final = functions.solve_advection(psi, N, dt, dx, T_end, a)
+# Berechnung der Lösung der Advektionsgleichung
+a_arr = np.array([a for j in u])
+psi_final = functions.solve_advection(psi, N, dt, dx, T_end, a_arr)
 
 # Ende der Rechenzeit
 end_time = time.time()
