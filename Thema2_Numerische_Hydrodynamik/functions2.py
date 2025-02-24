@@ -1,5 +1,4 @@
 import numpy as np
-from regex import T
 
 # Aufgabe 2
 
@@ -38,12 +37,13 @@ def u_adv(u, N, dt, dx, j):
 # Berechnung der Flüsse
 def compute_F(rho, u, epsilon, N, dt, dx):
     F_m = np.zeros(N+5)
-    F_i = np.zeros(N+5)
+    F_i = np.zeros(N+4)
     F_e = np.zeros(N+5)
-    for j in range(2, N+3):
+    for j in range(2, N+2):
         F_m[j] = u[j] * variable_adv(rho, N, dt, dx, u, j)
-        F_i[j] = 0.5 * (F_m[j] + F_m[j+1]) * u_adv(u, N, dt, dx, j)
         F_e[j] = F_m[j] * variable_adv(epsilon, N, dt, dx, u, j)
+    for j in range(2, N+3):
+        F_i[j] = 0.5 * (F_m[j] + F_m[j+1]) * u_adv(u, N, dt, dx, j)
     return F_m, F_i, F_e
 
 # Lösung des Stoßrohrs
@@ -71,8 +71,10 @@ def solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma):
         # reflektierende Randbedingungen
         F_m[1], F_m[0] = F_m[2], F_m[3]
         F_m[N+2], F_m[N+3] = F_m[N+1], F_m[N]
-        F_i[1], F_i[0] = F_i[2], F_i[3]
-        F_i[N+2], F_i[N+3] = F_i[N+1], F_i[N]
+        #F_i[1], F_i[0] = F_i[2], F_i[3]
+        #F_i[N+2], F_i[N+3] = F_i[N+1], F_i[N]
+        F_i[2], F_i[1] = 0, -F_i[3]
+        F_i[N+2], F_i[N+3] = 0, -F_i[N+1]
         F_e[1], F_e[0] = F_e[2], F_e[3]
         F_e[N+2], F_e[N+3] = F_e[N+1], F_e[N]
 
@@ -82,7 +84,6 @@ def solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma):
             rho_mean[j] = 0.5 * (rho[j-1] + rho[j]) 
             rho_mean_new[j] = 0.5 * (rho_new[j-1] + rho_new[j])
             u_new[j] = (u[j] * rho_mean[j] - dt/dx * (F_i[j] - F_i[j-1])) / rho_mean_new[j]
-        for j in range(2, N+3):
             epsilon_new[j] = (epsilon[j] * rho[j] - dt/dx * (F_e[j+1] - F_e[j])) / rho_new[j]
 
         # Reflektierende Randbedingungen

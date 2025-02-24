@@ -34,14 +34,14 @@ rho_final, u_final, epsilon_final, p_final = functions2.solve_shock_tube(rho, u,
 T_final = (gamma - 1) * epsilon_final
 
 # Plot der Ergebnisse
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(12, 10))
 plt.plot(x_B, rho_final[2:N+2], label="Dichte", linewidth=2)
 plt.plot(x_B, u_final[2:N+2], label="Geschwindigkeit", linewidth=2)
 plt.plot(x_B, p_final[2:N+2], label="Druck", linewidth=2)
 plt.plot(x_B, T_final[2:N+2], label="Temperatur", linewidth=2)
 plt.xlabel("x", fontsize=16)
 plt.ylabel("Wert", fontsize=16)
-plt.title("1D-Stoßrohr-Lösung nach 0.228s", fontsize=18)
+plt.title(f"1D-Stoßrohr-Lösung nach {T_end}s", fontsize=18)
 plt.legend(fontsize=14)
 plt.grid()
 plt.xticks(fontsize=14)
