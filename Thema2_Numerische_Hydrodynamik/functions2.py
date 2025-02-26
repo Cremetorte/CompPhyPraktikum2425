@@ -84,12 +84,26 @@ def compute_F(rho, u, epsilon, N, dt, dx):
 # Lösung des Stoßrohrs
 def solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma):
     t = 0
+    sigma_ls = []
     while t < T_end:
         rho_mean = np.zeros(N+5)
         rho_mean_new = np.zeros(N+5)
 
         rho_new, u_new, epsilon_new, p_new = np.copy(rho), np.copy(u), np.copy(epsilon), np.copy(p)
         
+        """
+        Berechnung der maximalen Courantzahl für jeden Zeitschritt
+        mit Berücksichtigung der Schallgeschwindigkeit
+        """
+        c_S = np.zeros(N+4)
+        for j in range(N+4):
+            c_S[j] = np.sqrt(gamma * p[j] / rho[j])
+        c_S_max = np.max(c_S)
+        u_max = np.max(np.abs(u))
+        c_max = c_S_max + u_max
+        sigma = c_max * dt/dx
+        sigma_ls.append(sigma)
+
         # Berechnung der Flüsse
         F_m, F_i, F_e = compute_F(rho, u, epsilon, N, dt, dx)
 
@@ -120,7 +134,10 @@ def solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma):
         for j in range(2, N+2):    
             epsilon_new[j] = epsilon_new[j] - dt/dx * p_new[j]/rho_new[j] * (utmp[j+1] - utmp[j])
 
+
         rho, u, epsilon, p = rho_new, u_new, epsilon_new, p_new
         t += dt
 
-    return rho, u, epsilon, p
+    sigma_max = np.max(sigma_ls)
+
+    return rho, u, epsilon, p, sigma_max

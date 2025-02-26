@@ -30,7 +30,7 @@ p[N//2+2:] = 0.1
 epsilon = p / ((gamma - 1) * rho)
 
 # Berechnung der Lösung des Stoßrohrs
-rho_final, u_final, epsilon_final, p_final = functions2.solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma)
+rho_final, u_final, epsilon_final, p_final, sigma_max = functions2.solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma)
 T_final = (gamma - 1) * epsilon_final
 
 ################################################################
@@ -52,6 +52,9 @@ Tref = (gamma - 1) * epsilon_ref
 
 # weil die Referenzlösung um 0.5 verschoben ist
 xref_shifted = xref + 0.5
+
+# maximales sigma ausgeben
+print(f"Maximale Courantzahl: {sigma_max}")
 
 # Plot der numerischen und analytischen Lösung
 fig, ax = plt.subplots(4, figsize=(12, 10))
