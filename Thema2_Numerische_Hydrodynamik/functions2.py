@@ -3,87 +3,118 @@ import numpy as np
 # Aufgabe 2
 
 # Berechnung Delta roh, Delta u, Delta epsilon
-def compute_delta_variable(variable, N, j):
-    delta_variable = np.zeros(N+4)
-    num = (variable[j+1] - variable[j]) * (variable[j] - variable[j-1])
-    if num > 0:
-        delta_variable = 2*num / ((variable[j+1] - variable[j-1]) + 1e-12)
-    else:
-        delta_variable = 0
-    return delta_variable
+def compute_delta_rho(rho, N):
+    delta_rho = np.zeros(N+4)
+    for j in range(1, N+3):
+        num = (rho[j+1] - rho[j]) * (rho[j] - rho[j-1])
+        if num > 0:
+            delta_rho[j] = 2*num / ((rho[j+1] - rho[j-1]) + 1e-12)
+        else:
+            delta_rho[j] = 0
+    return delta_rho
 
-# erweitertes Upwindverfahren; variable_adv für rho und epsilon
-def variable_adv(variable, N, dt, dx, u, j):
-    if u[j] > 0:
-        delta_variable_j_1 = compute_delta_variable(variable, N, j-1)
-        variable_adv = variable[j-1] + 0.5 * (1 - u[j] * dt/dx) * delta_variable_j_1
-    else:
-        delta_variable_j = compute_delta_variable(variable, N, j)
-        variable_adv = variable[j] - 0.5 * (1 + u[j] * dt/dx) * delta_variable_j
-    return variable_adv
+def compute_delta_u(u, N):
+    delta_u = np.zeros(N+4)
+    for j in range(2, N+2):
+        num = (u[j+1] - u[j]) * (u[j] - u[j-1])
+        if num > 0:
+            delta_u[j] = 2*num / ((u[j+1] - u[j-1]) + 1e-12)
+        else:
+            delta_u[j] = 0
+    return delta_u
 
-# erweitertes Upwindverfahren für u_adv
-def u_adv(u, N, dt, dx, j):
+def compute_delta_epsilon(epsilon, N):
+    delta_epsilon = np.zeros(N+4)
+    for j in range(1, N+3):
+        num = (epsilon[j+1] - epsilon[j]) * (epsilon[j] - epsilon[j-1])
+        if num > 0:
+            delta_epsilon[j] = 2*num / ((epsilon[j+1] - epsilon[j-1]) + 1e-12)
+        else:
+            delta_epsilon[j] = 0
+    return delta_epsilon
+
+# erweitertes Upwindverfahren; rho_adv, u_adv und epsilon_adv
+def compute_rho_adv(rho, N, dt, dx, u):
+    delta_rho = compute_delta_rho(rho, N)
+    rho_adv = np.zeros(N+4)
+    for j in range(2, N+3):
+        if u[j] > 0:
+            rho_adv[j] = rho[j-1] + 0.5 * (1 - u[j] * dt/dx) * delta_rho[j-1]
+        else:
+            rho_adv[j] = rho[j] - 0.5 * (1 + u[j] * dt/dx) * delta_rho[j]
+    return rho_adv
+
+def compute_u_adv(u, N, dt, dx):
+    delta_u = compute_delta_u(u, N)
     u_mean = np.zeros(N+4)
-    u_mean[j] = 0.5 * (u[j] + u[j+1])
-    if u_mean[j] > 0:
-        delta_u_j = compute_delta_variable(u, N, j)
-        variable_adv = u[j] + 0.5 * (1 - u_mean[j] * dt/dx) * delta_u_j
-    else:
-        delta_u_j1 = compute_delta_variable(u, N, j+1)
-        variable_adv = u[j+1] - 0.5 * (1 + u_mean[j] * dt/dx) * delta_u_j1
-    return variable_adv
+    u_adv = np.zeros(N+4)
+    for j in range(2, N+2):
+        u_mean[j] = 0.5 * (u[j] + u[j+1])
+        if u_mean[j] > 0:
+            u_adv[j] = u[j] + 0.5 * (1 - u_mean[j] * dt/dx) * delta_u[j]
+        else:
+            u_adv[j] = u[j+1] - 0.5 * (1 + u_mean[j] * dt/dx) * delta_u[j+1]
+    return u_adv
+
+def compute_epsilon_adv(epsilon, N, dt, dx, u):
+    delta_epsilon = compute_delta_epsilon(epsilon, N)
+    epsilon_adv = np.zeros(N+4)
+    for j in range(2, N+3):
+        if u[j] > 0:
+            epsilon_adv[j] = epsilon[j-1] + 0.5 * (1 - u[j] * dt/dx) * delta_epsilon[j-1]
+        else:
+            epsilon_adv[j] = epsilon[j] - 0.5 * (1 + u[j] * dt/dx) * delta_epsilon[j]
+    return epsilon_adv
 
 # Berechnung der Flüsse
 def compute_F(rho, u, epsilon, N, dt, dx):
     F_m = np.zeros(N+5)
     F_i = np.zeros(N+4)
     F_e = np.zeros(N+5)
-    for j in range(2, N+2):
-        F_m[j] = u[j] * variable_adv(rho, N, dt, dx, u, j)
-        F_e[j] = F_m[j] * variable_adv(epsilon, N, dt, dx, u, j)
+    rho_adv = compute_rho_adv(rho, N, dt, dx, u)
+    u_adv = compute_u_adv(u, N, dt, dx)
+    epsilon_adv = compute_epsilon_adv(epsilon, N, dt, dx, u)
     for j in range(2, N+3):
-        F_i[j] = 0.5 * (F_m[j] + F_m[j+1]) * u_adv(u, N, dt, dx, j)
+        F_m[j] = u[j] * rho_adv[j]
+        F_e[j] = F_m[j] * epsilon_adv[j]
+    for j in range(2, N+2):
+        F_i[j] = 0.5 * (F_m[j] + F_m[j+1]) * u_adv[j]
     return F_m, F_i, F_e
 
 # Lösung des Stoßrohrs
 def solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma):
     t = 0
+    sigma_ls = []
     while t < T_end:
         rho_mean = np.zeros(N+5)
         rho_mean_new = np.zeros(N+5)
 
         rho_new, u_new, epsilon_new, p_new = np.copy(rho), np.copy(u), np.copy(epsilon), np.copy(p)
-
-        # Reflektierende Randbedingungen
-        u_new[2], u_new[1] = 0, -u_new[3]
-        u_new[N+2], u_new[N+3] = 0, -u_new[N+1]
-        rho_new[1], rho_new[0] = rho_new[2], rho_new[3]
-        rho_new[N+2], rho_new[N+3] = rho_new[N+1], rho_new[N]
-        epsilon_new[1], epsilon_new[0] = epsilon_new[2], epsilon_new[3]
-        epsilon_new[N+2], epsilon_new[N+3] = epsilon_new[N+1], epsilon_new[N]
-        p_new[1], p_new[0] = p_new[2], p_new[3]
-        p_new[N+2], p_new[N+3] = p_new[N+1], p_new[N]
+        
+        """
+        Berechnung der maximalen Courantzahl für jeden Zeitschritt
+        mit Berücksichtigung der Schallgeschwindigkeit
+        """
+        c_S = np.zeros(N+4)
+        for j in range(N+4):
+            c_S[j] = np.sqrt(gamma * p[j] / rho[j])
+        c_S_max = np.max(c_S)
+        u_max = np.max(np.abs(u))
+        c_max = c_S_max + u_max
+        sigma = c_max * dt/dx
+        sigma_ls.append(sigma)
 
         # Berechnung der Flüsse
         F_m, F_i, F_e = compute_F(rho, u, epsilon, N, dt, dx)
 
-        # reflektierende Randbedingungen
-        F_m[1], F_m[0] = F_m[2], F_m[3]
-        F_m[N+2], F_m[N+3] = F_m[N+1], F_m[N]
-        #F_i[1], F_i[0] = F_i[2], F_i[3]
-        #F_i[N+2], F_i[N+3] = F_i[N+1], F_i[N]
-        F_i[2], F_i[1] = 0, -F_i[3]
-        F_i[N+2], F_i[N+3] = 0, -F_i[N+1]
-        F_e[1], F_e[0] = F_e[2], F_e[3]
-        F_e[N+2], F_e[N+3] = F_e[N+1], F_e[N]
-
         # Advektionsschritt
-        for j in range(1, N+3):
+        for j in range(2, N+2):
             rho_new[j] = rho[j] - (dt/dx) * (F_m[j+1] - F_m[j])
+        for j in range(3, N+2):
             rho_mean[j] = 0.5 * (rho[j-1] + rho[j]) 
             rho_mean_new[j] = 0.5 * (rho_new[j-1] + rho_new[j])
             u_new[j] = (u[j] * rho_mean[j] - dt/dx * (F_i[j] - F_i[j-1])) / rho_mean_new[j]
+        for j in range(2, N+2):
             epsilon_new[j] = (epsilon[j] * rho[j] - dt/dx * (F_e[j+1] - F_e[j])) / rho_new[j]
 
         # Reflektierende Randbedingungen
@@ -95,14 +126,18 @@ def solve_shock_tube(rho, u, epsilon, p, N, dt, dx, T_end, gamma):
         epsilon_new[N+2], epsilon_new[N+3] = epsilon_new[N+1], epsilon_new[N]
 
         # Kräfte, Druckarbeit
-        p_new = (gamma - 1) * rho_new * epsilon_new
-        for j in range(2, N+2):
-            u_new[j] -= dt/dx * (p_new[j] - p_new[j-1]) / rho_mean_new[j]
-        for j in range(2, N+3):    
-            epsilon_new[j] -= dt/dx * p_new[j]/rho_new[j] * (u_new[j+1] - u_new[j])
+        for j in range(N+4):
+            p_new[j] = (gamma - 1) * rho_new[j] * epsilon_new[j]
+        utmp = np.copy(u_new)
+        for j in range(3, N+2):
+            u_new[j] = u_new[j] - dt/dx * (p_new[j] - p_new[j-1]) / rho_mean_new[j]
+        for j in range(2, N+2):    
+            epsilon_new[j] = epsilon_new[j] - dt/dx * p_new[j]/rho_new[j] * (utmp[j+1] - utmp[j])
 
 
         rho, u, epsilon, p = rho_new, u_new, epsilon_new, p_new
         t += dt
 
-    return rho, u, epsilon, p
+    sigma_max = np.max(sigma_ls)
+
+    return rho, u, epsilon, p, sigma_max
