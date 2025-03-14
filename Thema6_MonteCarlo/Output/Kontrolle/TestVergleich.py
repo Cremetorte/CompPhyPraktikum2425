@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")
+matplotlib.rcParams.update({'font.size': 11})
+
 import glob
 from tabulate import tabulate
 
@@ -27,7 +29,7 @@ def split_columns(array):
     return res
 
 def error(array):
-    nr_measurements = array.shape[0]/10000  
+    nr_measurements = np.sqrt(array.shape[0]) 
     # sigma = np.sqrt((np.mean(np.square(array)) - np.mean(array)**2)/nr_measurements)
     # return sigma/np.sqrt(nr_measurements)
     return np.std(array)/nr_measurements
@@ -107,27 +109,27 @@ print(tabulate(table,
 
 
 
-# -------------------------------------------------------------------------------------------- Plot Ns
+# # -------------------------------------------------------------------------------------------- Plot Ns
 
-fig, axs = plt.subplots(2)
+# fig, axs = plt.subplots(2)
 
-axs[0].set_title("N_tot")
-axs[0].set_xlabel("Time")
-axs[0].set_ylabel("N_tot")  
-for z in z_list:
-    axs[0].plot(obs_dict[z][:,2], label=f"{z = }")
-axs[0].legend()
+# axs[0].set_title("N_tot")
+# axs[0].set_xlabel("Time")
+# axs[0].set_ylabel("N_tot")  
+# for z in z_list:
+#     axs[0].plot(obs_dict[z][:,2], label=f"{z = }")
+# axs[0].legend()
 
 
-axs[1].set_title("N_diff")
-axs[1].set_xlabel("Time")
-axs[1].set_ylabel("N_hor - N_ver")
-for z in z_list:
-    axs[1].plot(obs_dict[z][:,0] - obs_dict[z][:,1], label=f"{z = }")
-axs[1].legend()
+# axs[1].set_title("N_diff")
+# axs[1].set_xlabel("Time")
+# axs[1].set_ylabel("N_hor - N_ver")
+# for z in z_list:
+#     axs[1].plot(obs_dict[z][:,0] - obs_dict[z][:,1], label=f"{z = }")
+# axs[1].legend()
 
-plt.tight_layout()
-plt.savefig("N_tot_N_diff.png")
+# plt.tight_layout()
+# plt.savefig("N_tot_N_diff.png")
 
 
 # ------------------------------------------------------------------------------- S(eta)

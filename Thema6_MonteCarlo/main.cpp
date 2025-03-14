@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     vector<vector<double>> observations;
 
     // thermalize
-    for (int i=0; i<1000; i++) {
+    for (int i=0; i<10000; i++) {
         gcmcStep(horizontalRods, verticalRods, occupationField, Z);
     }
 
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     for (long int t = 1; t < total_it; t++) {
         gcmcStep(horizontalRods, verticalRods, occupationField, Z);
         
-        if (t % 1000 == 0) { // calculate observables
+        if (t % 50000 == 0) { // calculate observables
             observations.push_back(observables(horizontalRods, verticalRods, occupationField));
             // if (observations.back()[4] == 1 && !savedOnePhase) {
             //     string filenamehor = "Output/horizontal_twoPhase_z=" + to_string(Z) + ".csv";

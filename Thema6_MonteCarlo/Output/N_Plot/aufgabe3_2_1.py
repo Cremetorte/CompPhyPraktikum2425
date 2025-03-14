@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")
-
+matplotlib.rcParams.update({'font.size': 19})
 
 def index_1d_array(array, step = 1):
     return np.arange(0, len(array), step)
@@ -37,7 +37,7 @@ for i, z in enumerate(data.keys()):
     axs[i].plot(index_1d_array(n_hor[z]), n_hor[z], label=fr"$N_{{hor}}, z={z}$", color="red")
     axs[i].plot(index_1d_array(n_ver[z]), n_ver[z], label=fr"$N_{{ver}}, z={z}$", color="blue")
     axs[i].legend(loc=1)
-    axs[i].set_xlabel("TIteration/100")
+    axs[i].set_xlabel("Iteration/100")
     axs[i].set_ylabel("N")
     axs[i].set_title(fr"$z={z}$")
     axs[i].grid()
