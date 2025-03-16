@@ -1,5 +1,7 @@
 import numpy as np
 import itertools
+import matplotlib.pyplot as plt
+from scipy.integrate import quad
 
 # Berechnung der Energie einer bestimmten Konfiguration
 def energie(spins, L, J=1, h=0):
@@ -7,14 +9,12 @@ def energie(spins, L, J=1, h=0):
     for i in range(L):
         for j in range(L):
             s = spins[i, j]
-            # Nachbar-Spins mit periodischen Randbedingungen
             H -= J * s * (spins[(i+1) % L, j] + spins[i, (j+1) % L])
-            H -= h * s  # Externes Magnetfeld
+            H -= h * s
     return H
 
-# Funktion zur Berechnung der Zustandssumme und Observablen
+# Berechnung der Zustandssumme und Observablen
 def ising_direct_sum(L, beta):
-    # Alle möglichen Spin-Konfigurationen durchgehen
     states = list(itertools.product([-1, 1], repeat=L*L))
     
     Z = 0
@@ -33,19 +33,71 @@ def ising_direct_sum(L, beta):
         avg_M += M * weight
         avg_absM += abs(M) * weight
     
-    # Normierung durch Zustandssumme Z
+    # Normierung
     avg_E /= Z
     avg_M /= Z
     avg_absM /= Z
     
     return avg_E / (L * L), avg_M / (L * L), avg_absM / (L * L)
 
-# Temperaturbereich
-beta_values = np.linspace(0, 1, 10)
+# Analytische Lösung
+def analytical_energy(beta):
+    J = 1
+    xi = 2 * np.tanh(2 * beta * J) / np.cosh(2 * beta * J)
+    def integrand(theta, xi):
+        return 1 / np.sqrt(1 - xi**2 * np.sin(theta)**2)
+    K, _ = quad(integrand, 0, np.pi/2, args=(xi))
+    coth = np.cosh(2 * beta * J) / np.sinh(2 * beta * J)
+    epsilon = - J * coth * (1 + (2 * np.tanh(2*beta*J)**2 -1) * 2/np.pi * K)
+    return epsilon
 
-# Gittergrößen L = 2, 3, 4
-for L in [2, 3, 4]:
-    print(f"\nIsing-Modell für L = {L}:")
-    for beta in beta_values:
-        energy, magnetization, abs_magnetization = ising_direct_sum(L, beta)
-        print(f"β = {beta:.2f} -> ⟨E⟩ = {energy:.4f}, ⟨m⟩ = {magnetization:.4f}, ⟨|m|⟩ = {abs_magnetization:.4f}")
+def analytical_magnetization(beta):
+    beta_c = 0.440687
+    if beta < beta_c:
+        return 0
+    else:
+        return (1 - np.sinh(2 * beta) ** (-4)) ** (1/8)
+
+# Simulation für verschiedene L
+beta_values = np.linspace(0.01, 1, 100)
+L_values = [2, 3, 4]
+
+energies = {L: [] for L in L_values}
+magnetizations = {L: [] for L in L_values}
+
+# Berechnung der numerischen Werte für L = 2, 3, 4
+for beta in beta_values:
+    for L in L_values:
+        E, M, absM = ising_direct_sum(L, beta)
+        energies[L].append(E)
+        magnetizations[L].append(absM)
+
+# Berechnung der analytischen Werte
+E_analytic = [analytical_energy(beta) for beta in beta_values]
+M_analytic = [analytical_magnetization(beta) for beta in beta_values]
+
+# Plot für Energiedichte
+plt.figure(figsize=(8, 5))
+for L in L_values:
+    plt.plot(beta_values, energies[L], '-', label=f"L = {L}")
+
+plt.plot(beta_values, E_analytic, 'k--', label="Analytische Lösung")
+plt.xlabel("$\\beta$")
+plt.ylabel("$\\epsilon$")
+plt.title("Energiedichte als Funktion der inversen Temperatur")
+plt.legend()
+plt.grid()
+plt.show()
+
+# Plot für Magnetisierung
+plt.figure(figsize=(8, 5))
+for L in L_values:
+    plt.plot(beta_values, magnetizations[L], '-', label=f"L = {L}")
+
+plt.plot(beta_values, M_analytic, 'k--', label="Analytische Lösung")
+plt.xlabel("$\\beta$")
+plt.ylabel("$⟨|m|⟩$")
+plt.title("Spontane Magnetisierung als Funktion der inversen Temperatur")
+plt.legend()
+plt.grid()
+plt.show()
