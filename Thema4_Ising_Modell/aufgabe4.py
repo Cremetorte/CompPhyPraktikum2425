@@ -1,5 +1,17 @@
 import numpy as np
-import aufgabe3
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Funktion zur Berechnung von Observablen nach Sweeps
+def compute_observables(spins):
+    L = spins.shape[0]
+    E = 0
+    M = np.sum(spins)
+    for i in range(L):
+        for j in range(L):
+            s = spins[i, j]
+            E -= s * (spins[(i+1) % L, j] + spins[i, (j+1) % L])
+    return E / (L * L), M / (L * L), abs(M) / (L * L), (M**2) / (L * L)
 
 # Aufgabe a)
 
@@ -28,7 +40,7 @@ def heat_bath_sweep(spins, beta, J=1, h=0):
     return spins
 
 # Simulation mit dem Wärmebad-Algorithmus
-def ising_heat_bath(L, beta, num_sweeps=200000, therm_steps=5000):
+def ising_heat_bath(L, beta, num_sweeps=10000, therm_steps=1000):
     spins = initialize_lattice(L)  # Zufällige Startkonfiguration
     
     # Thermalisation (System ins Gleichgewicht bringen)
@@ -52,56 +64,112 @@ def ising_heat_bath(L, beta, num_sweeps=200000, therm_steps=5000):
     avg_Msq = np.mean(magnet_sq_vals)
     
     # Spezifische Wärme berechnen: c = (⟨E²⟩ - ⟨E⟩²) / T²
-    specific_heat = (np.var(energy_vals)) / (beta**2)
+    specific_heat = (np.var(energy_vals)) * (beta**2)
     
     return avg_E, avg_M, avg_absM, avg_Msq, specific_heat
+
+# Parameter für Aufgabe 4a
+L_large = 128
+beta_values = np.linspace(0.01, 1, 100)
+
+# Simulation
+avg_E_values = []
+avg_M_values = []
+avg_absM_values = []
+specific_heat_values = []
+for beta in beta_values:
+    avg_E, avg_M, avg_absM, avg_Msq, c = ising_heat_bath(L_large, beta)
+    avg_E_values.append(avg_E)
+    avg_M_values.append(avg_M)
+    avg_absM_values.append(avg_absM)
+    specific_heat_values.append(c)
+
+# Plot der Ergebnisse
+# Innere Energiedichte
+plt.figure(figsize=(10, 6))
+plt.plot(beta_values, avg_E_values)
+plt.xlabel("$\\beta$")
+plt.ylabel("$\\epsilon$")
+plt.title("Innere Energiedichte")
+plt.legend()
+plt.grid()
+plt.show()
+
+# Magnetisierung
+plt.figure(figsize=(10, 6))
+plt.plot(beta_values, avg_absM_values)
+plt.xlabel("$\\beta$")
+plt.ylabel("$|m|$")
+plt.title("Magnetisierung")
+plt.legend()
+plt.grid()
+plt.show()
+
+# Spezifische Wärme
+plt.figure(figsize=(10, 6))
+plt.plot(beta_values, specific_heat_values)
+plt.xlabel("$\\beta$")
+plt.ylabel("$c/k_B$")
+plt.title("Spezifische Wärme")
+plt.legend()
+plt.grid()
+plt.show()
 
 # Aufgabe 4 b)
 
 # Funktion zur Berechnung der Magnetisierung als Funktion von h
-def hysteresis_curve(L, beta, h_initial, h_final, num_sweeps=200000, therm_steps=5000):
-    h_values = np.linspace(h_initial, h_final, 50)  # Magnetfeld von h_initial bis h_final
+def hysteresis_curve(L, beta, h_initial, h_final, num_sweeps=1000, therm_steps=1000):
+    h_values = np.linspace(h_initial, h_final, 200)  # Magnetfeld von h_initial bis h_final
     magnetizations = []
     
     for h in h_values:
         avg_E, avg_M, avg_absM, avg_Msq, c = ising_heat_bath(L, beta, num_sweeps, therm_steps)
-        magnetizations.append(avg_M)  # Magnetisierung für jedes h
+        magnetizations.append(avg_M)
     
     return h_values, magnetizations
 
 # Beispiel für eine Hysterese-Kurve
-L = 32  # Beispielgröße des Gitters
-beta = 0.5  # Beispielwert für β
+L = 23  # Beispielgröße des Gitters
+beta = 0.7  # Beispielwert für β
 h_initial = 1.0  # Startwert für das Magnetfeld
 h_final = -1.0  # Endwert für das Magnetfeld
 
-h_values, magnetizations = hysteresis_curve(L, beta, h_initial, h_final)
-print(f"Hysterese-Kurve für L={L}, β={beta}:")
-for h, mag in zip(h_values, magnetizations):
-    print(f"h = {h:.2f}, ⟨m⟩ = {mag:.4f}")
+# Simulation der Hysterese-Kurve
+h_values, magnetization_1 = hysteresis_curve(L, beta, h_initial, h_final)
+h_values, magnetization_2 = hysteresis_curve(L, beta, h_final, h_initial)
+
+# Plot der Hysterese-Kurve
+plt.figure(figsize=(8, 5))
+plt.plot(h_values, magnetization_1, linestyle='-', color='b')
+plt.plot(h_values, magnetization_2, linestyle='-', color='b')
+
+plt.xlabel("Externes Magnetfeld $h$")
+plt.ylabel("Magnetisierung $⟨m⟩$")
+plt.title(f"Hysterese-Effekt für $L={L}$, $\\beta={beta}$")
+plt.grid()
+plt.show()
 
 # Aufgabe 4 c)
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
 # Funktion zur Berechnung der Magnetisierung als Funktion von β und h
-def magnetization_vs_beta_h(L, beta_values, h_values, num_sweeps=200000, therm_steps=5000):
+def magnetization_vs_beta_h(L, beta_values, h_values, num_sweeps=1000, therm_steps=1000):
     magnetizations = np.zeros((len(beta_values), len(h_values)))  # Matrix für Magnetisierung
+    magnetizations_abs = np.zeros((len(beta_values), len(h_values)))  # Matrix für Betrag der Magnetisierung
     
     for i, beta in enumerate(beta_values):
         for j, h in enumerate(h_values):
             avg_E, avg_M, avg_absM, avg_Msq, c = ising_heat_bath(L, beta, num_sweeps, therm_steps)
             magnetizations[i, j] = avg_M  # Magnetisierung für jedes β und h
+            magnetizations_abs[i, j] = avg_absM  # Betrag der Magnetisierung für jedes β und h
     
-    return magnetizations
+    return magnetizations, magnetizations_abs
 
 # Beispielwerte für β und h
 beta_values = np.linspace(0.1, 1, 20)
 h_values = np.linspace(-1.0, 1.0, 20)
 
 # Berechnung der Magnetisierung
-magnetizations = magnetization_vs_beta_h(32, beta_values, h_values)
+magnetizations, magnetizations_abs = magnetization_vs_beta_h(32, beta_values, h_values)
 
 # 3D-Plot der Magnetisierung als Funktion von β und h
 X, Y = np.meshgrid(h_values, beta_values)
@@ -109,9 +177,19 @@ fig = plt.figure(figsize=(10, 7))
 ax = fig.add_subplot(111, projection='3d')
 ax.plot_surface(X, Y, magnetizations, cmap='viridis')
 
-ax.set_xlabel('Magnetfeld h')
-ax.set_ylabel('β (1/T)')
-ax.set_zlabel('Magnetisierung ⟨m⟩')
-ax.set_title('Magnetisierung als Funktion von β und h')
+ax.set_xlabel('Magnetfeld $h$')
+ax.set_ylabel('Inverse Temperatur $\\beta$')
+ax.set_zlabel('Magnetisierung $\\langle m \\rangle$')
+ax.set_title('Magnetisierung als Funktion von $\\beta$ und $h$')
 
 plt.show()
+
+# 3D-Plot des Betrags der Magnetisierung als Funktion von β und h
+fig = plt.figure(figsize=(10, 7))
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_surface(X, Y, magnetizations_abs, cmap='viridis')
+
+ax.set_xlabel('Magnetfeld $h$')
+ax.set_ylabel('Inverse Temperatur $\\beta$')
+ax.set_zlabel('Betrag der Magnetisierung $\\langle |m| \\rangle$')
+ax.set_title('Betrag der Magnetisierung als Funktion von $\\beta$ und $h$')
