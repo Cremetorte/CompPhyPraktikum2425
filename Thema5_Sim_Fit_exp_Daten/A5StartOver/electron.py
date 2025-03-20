@@ -2,7 +2,7 @@ import numpy as np
 from functions import rand_dist_alt
 
 
-class electron:
+class Electron:
     m = 0.511
     r = 0.0005
 
@@ -16,6 +16,9 @@ class electron:
 
     def position(self):
         return (self.x, self.y, self.z)
+    
+    def direction(self):
+        return (self.theta, self.phi)
     
     def gamma(self):
         return 1 + self.T/self.m
@@ -35,7 +38,7 @@ class electron:
 
         # Moeller scattering (warning: formulas are not correct)
         moeller = lambda x: self.r**2/4*(self.m/P)**2 * (3 + np.cos(x))**2/np.sin(x)**4
-        theta_cms = rand_dist_alt(moeller, 0, np.pi/2)
+        theta_cms = rand_dist_alt(moeller, 0.0001, np.pi/2)
         
         
 
@@ -67,8 +70,8 @@ class electron:
 
     def mott_scatter(self):
         phi = np.random.rand() * 2 * np.pi
-        mott = lambda x: 1/self.T**2/np.sin(x/2)**4 * (1 - self.beta*np.sin(x/2)**2)
-        theta_cms = rand_dist_alt(mott, 0, np.pi/2)
+        mott = lambda x: 1/self.T**2/np.sin(x/2)**4 * (1 - self.beta()*np.sin(x/2)**2)
+        theta_cms = rand_dist_alt(mott, 0.0001, np.pi/2)
 
         if theta_cms >= 0.2:
             gamma = 1
