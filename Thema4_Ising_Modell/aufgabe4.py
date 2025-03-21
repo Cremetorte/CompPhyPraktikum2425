@@ -40,7 +40,7 @@ def heat_bath_sweep(spins, beta, J=1, h=0):
     return spins
 
 # Simulation mit dem Wärmebad-Algorithmus
-def ising_heat_bath(L, beta, num_sweeps=10000, therm_steps=1000):
+def ising_heat_bath(L, beta, num_sweeps=100, therm_steps=1000):
     spins = initialize_lattice(L)  # Zufällige Startkonfiguration
     
     # Thermalisation (System ins Gleichgewicht bringen)
@@ -71,7 +71,7 @@ def ising_heat_bath(L, beta, num_sweeps=10000, therm_steps=1000):
 # Parameter für Aufgabe 4a
 L_large = 128
 beta_values = np.linspace(0.01, 1, 100)
-
+"""
 # Simulation
 avg_E_values = []
 avg_M_values = []
@@ -91,7 +91,6 @@ plt.plot(beta_values, avg_E_values)
 plt.xlabel("$\\beta$")
 plt.ylabel("$\\epsilon$")
 plt.title("Innere Energiedichte")
-plt.legend()
 plt.grid()
 plt.show()
 
@@ -99,9 +98,8 @@ plt.show()
 plt.figure(figsize=(10, 6))
 plt.plot(beta_values, avg_absM_values)
 plt.xlabel("$\\beta$")
-plt.ylabel("$|m|$")
+plt.ylabel("$\\langle |m| \\rangle$")
 plt.title("Magnetisierung")
-plt.legend()
 plt.grid()
 plt.show()
 
@@ -111,12 +109,11 @@ plt.plot(beta_values, specific_heat_values)
 plt.xlabel("$\\beta$")
 plt.ylabel("$c/k_B$")
 plt.title("Spezifische Wärme")
-plt.legend()
 plt.grid()
 plt.show()
 
 # Aufgabe 4 b)
-
+"""
 # Funktion zur Berechnung der Magnetisierung als Funktion von h
 def hysteresis_curve(L, beta, h_initial, h_final, num_sweeps=1000, therm_steps=1000):
     h_values = np.linspace(h_initial, h_final, 200)  # Magnetfeld von h_initial bis h_final
@@ -129,7 +126,7 @@ def hysteresis_curve(L, beta, h_initial, h_final, num_sweeps=1000, therm_steps=1
     return h_values, magnetizations
 
 # Beispiel für eine Hysterese-Kurve
-L = 23  # Beispielgröße des Gitters
+L = 32  # Beispielgröße des Gitters
 beta = 0.7  # Beispielwert für β
 h_initial = 1.0  # Startwert für das Magnetfeld
 h_final = -1.0  # Endwert für das Magnetfeld
@@ -150,7 +147,7 @@ plt.grid()
 plt.show()
 
 # Aufgabe 4 c)
-
+"""
 # Funktion zur Berechnung der Magnetisierung als Funktion von β und h
 def magnetization_vs_beta_h(L, beta_values, h_values, num_sweeps=1000, therm_steps=1000):
     magnetizations = np.zeros((len(beta_values), len(h_values)))  # Matrix für Magnetisierung
@@ -193,3 +190,4 @@ ax.set_xlabel('Magnetfeld $h$')
 ax.set_ylabel('Inverse Temperatur $\\beta$')
 ax.set_zlabel('Betrag der Magnetisierung $\\langle |m| \\rangle$')
 ax.set_title('Betrag der Magnetisierung als Funktion von $\\beta$ und $h$')
+"""
