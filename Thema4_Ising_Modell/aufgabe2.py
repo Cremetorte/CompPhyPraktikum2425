@@ -21,6 +21,7 @@ def ising_direct_sum(L, beta):
     avg_E = 0
     avg_M = 0
     avg_absM = 0
+    avg_Msq = 0
     
     for state in states:
         spins = np.array(state).reshape(L, L)  # Spins in L×L-Form bringen
@@ -32,13 +33,15 @@ def ising_direct_sum(L, beta):
         avg_E += H * weight
         avg_M += M * weight
         avg_absM += abs(M) * weight
+        avg_Msq += (M**2) * weight
     
     # Normierung
     avg_E /= Z
     avg_M /= Z
     avg_absM /= Z
+    avg_Msq /= Z
     
-    return avg_E / (L * L), avg_M / (L * L), avg_absM / (L * L)
+    return avg_E / (L * L), avg_M / (L * L), avg_absM / (L * L), avg_Msq / (L * L)**2
 
 # Analytische Lösung
 def analytical_energy(beta):
@@ -58,6 +61,7 @@ def analytical_magnetization(beta):
     else:
         return (1 - np.sinh(2 * beta) ** (-4)) ** (1/8)
 
+
 # Simulation für verschiedene L
 beta_values = np.linspace(0.01, 1, 100)
 L_values = [2, 3, 4]
@@ -68,9 +72,16 @@ magnetizations = {L: [] for L in L_values}
 # Berechnung der numerischen Werte für L = 2, 3, 4
 for beta in beta_values:
     for L in L_values:
-        E, M, absM = ising_direct_sum(L, beta)
+        E, M, absM, Msq = ising_direct_sum(L, beta)
         energies[L].append(E)
         magnetizations[L].append(absM)
+
+# Berechnung der Observabeln für L = 4 bei beta = 0.4406868 (für Teil der Aufgabe 3)
+E_a3, M_a3, absM_a3, M_sq_a3 = ising_direct_sum(4, 0.4406868)
+print(f"Energie für L = 4 bei beta = 0.4406868: {E_a3}")
+print(f"Magnetisierung für L = 4 bei beta = 0.4406868: {absM_a3}")
+print(f"Quadratische Magnetisierung für L = 4 bei beta = 0.4406868: {M_sq_a3}")
+
 
 # Berechnung der analytischen Werte
 E_analytic = [analytical_energy(beta) for beta in beta_values]
