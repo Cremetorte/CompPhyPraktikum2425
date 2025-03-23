@@ -34,9 +34,9 @@ def heat_bath_sweep(spins, beta, J=1, h=0):
             q = np.exp(-k) / (2 * np.cosh(k))
             r = np.random.rand()  # Zufallszahl für die Akzeptanz
             if r < q:
-                spins[i, j] = 1
-            else:
                 spins[i, j] = -1
+            else:
+                spins[i, j] = +1
     return spins
 
 # Simulation mit dem Wärmebad-Algorithmus
@@ -144,7 +144,7 @@ plt.xlabel("Externes Magnetfeld $h$")
 plt.ylabel("Magnetisierung $⟨m⟩$")
 plt.title(f"Hysterese-Effekt für $L={L}$, $\\beta={beta}$")
 plt.grid()
-plt.show()
+plt.savefig("A4b_hysterese.png")
 
 # Aufgabe 4 c)
 """
