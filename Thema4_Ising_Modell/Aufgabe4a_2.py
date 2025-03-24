@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 from numba import njit
 from joblib import Parallel, delayed
-import Aufgabe4a_copy as A4a
+import Thema4_Ising_Modell.AlterCode.Aufgabe4a_copy as A4a
 
 def aufgabe_b(nr_obs, N_try=5, N_thermalizing=1000, N_a=200000, J=1, h=0):
     beta_critical = 0.4406868
