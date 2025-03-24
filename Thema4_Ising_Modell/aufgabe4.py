@@ -70,14 +70,15 @@ def ising_heat_bath(L, beta, num_sweeps=100, therm_steps=1000):
 
 # Parameter für Aufgabe 4a
 L_large = 128
-beta_values = np.linspace(0.01, 1, 100)
-"""
+beta_values = np.linspace(0.01, 1, 40)
+
 # Simulation
 avg_E_values = []
 avg_M_values = []
 avg_absM_values = []
 specific_heat_values = []
 for beta in beta_values:
+    print(f"Simulating for beta = {beta}")
     avg_E, avg_M, avg_absM, avg_Msq, c = ising_heat_bath(L_large, beta)
     avg_E_values.append(avg_E)
     avg_M_values.append(avg_M)
@@ -147,7 +148,7 @@ plt.grid()
 plt.savefig("A4b_hysterese.png")
 
 # Aufgabe 4 c)
-"""
+
 # Funktion zur Berechnung der Magnetisierung als Funktion von β und h
 def magnetization_vs_beta_h(L, beta_values, h_values, num_sweeps=1000, therm_steps=1000):
     magnetizations = np.zeros((len(beta_values), len(h_values)))  # Matrix für Magnetisierung
