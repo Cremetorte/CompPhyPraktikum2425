@@ -1,4 +1,5 @@
-from networkx import draw
+
+from joblib import Parallel, delayed
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -76,8 +77,9 @@ def compute_observables(spins, J=1, h=0):
 
     M = np.sum(spins)  # Magnetisierung berechnen
     E = hamiltonian(spins, J, h)
+    M_sq = M**2/L**2
     
-    return E / (L * L), np.abs(M) / (L * L), M**2/L**2
+    return E / (L * L), np.abs(M) / (L * L), M_sq/L**2
 
 
 
@@ -105,26 +107,29 @@ def get_obs_arrays(nr_obs, beta, L, N_try, N_thermalizing=1000, N_a=1000, J=1, h
         energy.append(obs[0])
         magnetization.append(obs[1])
         mag_sq.append(obs[2])
-    return energy, magnetization
+    return energy, magnetization, mag_sq
 
 def aufgabe_a(nr_obs, N_try, N_thermalizing=1000, N_a=1000, J=1, h=0):
-    L = 16
-    beta = np.linspace(0.1, 1, 10)
+    L = 128
+    beta = np.linspace(0.1, 1, 100)
     # beta = [0.4406868]
     
     energies = []
     magnetizations = []
     spec_heat = []
     
-    for b in beta:
+    def compute_for_beta(b):
         print(f"Calculating beta = {b}")
-        
         obs = get_obs_arrays(nr_obs, b, L, N_try, N_thermalizing, N_a, J, h)
-        energies.append(np.mean(obs[0]))
-        magnetizations.append(np.mean(obs[1]))
-        spec_heat.append(np.var(obs[0])*b**2)
-        
-        print(f"energy = {energies}\n, magentization = {magnetizations}")
+        energy = np.mean(obs[0])
+        magnetization = np.mean(obs[1])
+        specific_heat = np.var(obs[0]) * b**2
+        print(f"energy = {energy}, magnetization = {magnetization}")
+        return energy, magnetization, specific_heat
+
+    results = Parallel(n_jobs=-1)(delayed(compute_for_beta)(b) for b in beta)
+
+    energies, magnetizations, spec_heat = zip(*results)
         
     
         
@@ -163,4 +168,4 @@ def aufgabe_a(nr_obs, N_try, N_thermalizing=1000, N_a=1000, J=1, h=0):
         
     
 if __name__ == "__main__":
-    aufgabe_a(100, 5, 1000, 100)
+    aufgabe_a(nr_obs=100, N_try=5, N_thermalizing=1000, N_a=100, J=1, h=0)
