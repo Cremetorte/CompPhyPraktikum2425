@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
 from numba import njit
-import aufgabe3_test as A3
+import Thema4_Ising_Modell.aufgabe3a as A3
 from joblib import Parallel, delayed
 
 def aufgabe_b(nr_obs, N_try=5, N_thermalizing=1000, N_a=200000, J=1, h=0):

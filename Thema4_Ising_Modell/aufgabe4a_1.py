@@ -114,47 +114,47 @@ plt.grid()
 plt.show()
 
 
-# Aufgabe 4 c)
+# # Aufgabe 4 c)
 
-# Funktion zur Berechnung der Magnetisierung als Funktion von β und h
-def magnetization_vs_beta_h(L, beta_values, h_values, num_sweeps=1000, therm_steps=1000):
-    magnetizations = np.zeros((len(beta_values), len(h_values)))  # Matrix für Magnetisierung
-    magnetizations_abs = np.zeros((len(beta_values), len(h_values)))  # Matrix für Betrag der Magnetisierung
+# # Funktion zur Berechnung der Magnetisierung als Funktion von β und h
+# def magnetization_vs_beta_h(L, beta_values, h_values, num_sweeps=1000, therm_steps=1000):
+#     magnetizations = np.zeros((len(beta_values), len(h_values)))  # Matrix für Magnetisierung
+#     magnetizations_abs = np.zeros((len(beta_values), len(h_values)))  # Matrix für Betrag der Magnetisierung
     
-    for i, beta in enumerate(beta_values):
-        for j, h in enumerate(h_values):
-            avg_E, avg_M, avg_absM, avg_Msq, c = ising_heat_bath(L, beta, num_sweeps, therm_steps)
-            magnetizations[i, j] = avg_M  # Magnetisierung für jedes β und h
-            magnetizations_abs[i, j] = avg_absM  # Betrag der Magnetisierung für jedes β und h
+#     for i, beta in enumerate(beta_values):
+#         for j, h in enumerate(h_values):
+#             avg_E, avg_M, avg_absM, avg_Msq, c = ising_heat_bath(L, beta, num_sweeps, therm_steps)
+#             magnetizations[i, j] = avg_M  # Magnetisierung für jedes β und h
+#             magnetizations_abs[i, j] = avg_absM  # Betrag der Magnetisierung für jedes β und h
     
-    return magnetizations, magnetizations_abs
+#     return magnetizations, magnetizations_abs
 
-# Beispielwerte für β und h
-beta_values = np.linspace(0.1, 1, 20)
-h_values = np.linspace(-1.0, 1.0, 20)
+# # Beispielwerte für β und h
+# beta_values = np.linspace(0.1, 1, 20)
+# h_values = np.linspace(-1.0, 1.0, 20)
 
-# Berechnung der Magnetisierung
-magnetizations, magnetizations_abs = magnetization_vs_beta_h(32, beta_values, h_values)
+# # Berechnung der Magnetisierung
+# magnetizations, magnetizations_abs = magnetization_vs_beta_h(32, beta_values, h_values)
 
-# 3D-Plot der Magnetisierung als Funktion von β und h
-X, Y = np.meshgrid(h_values, beta_values)
-fig = plt.figure(figsize=(10, 7))
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(X, Y, magnetizations, cmap='viridis')
+# # 3D-Plot der Magnetisierung als Funktion von β und h
+# X, Y = np.meshgrid(h_values, beta_values)
+# fig = plt.figure(figsize=(10, 7))
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot_surface(X, Y, magnetizations, cmap='viridis')
 
-ax.set_xlabel('Magnetfeld $h$')
-ax.set_ylabel('Inverse Temperatur $\\beta$')
-ax.set_zlabel('Magnetisierung $\\langle m \\rangle$')
-ax.set_title('Magnetisierung als Funktion von $\\beta$ und $h$')
+# ax.set_xlabel('Magnetfeld $h$')
+# ax.set_ylabel('Inverse Temperatur $\\beta$')
+# ax.set_zlabel('Magnetisierung $\\langle m \\rangle$')
+# ax.set_title('Magnetisierung als Funktion von $\\beta$ und $h$')
 
-plt.show()
+# plt.show()
 
-# 3D-Plot des Betrags der Magnetisierung als Funktion von β und h
-fig = plt.figure(figsize=(10, 7))
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(X, Y, magnetizations_abs, cmap='viridis')
+# # 3D-Plot des Betrags der Magnetisierung als Funktion von β und h
+# fig = plt.figure(figsize=(10, 7))
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot_surface(X, Y, magnetizations_abs, cmap='viridis')
 
-ax.set_xlabel('Magnetfeld $h$')
-ax.set_ylabel('Inverse Temperatur $\\beta$')
-ax.set_zlabel('Betrag der Magnetisierung $\\langle |m| \\rangle$')
-ax.set_title('Betrag der Magnetisierung als Funktion von $\\beta$ und $h$')
+# ax.set_xlabel('Magnetfeld $h$')
+# ax.set_ylabel('Inverse Temperatur $\\beta$')
+# ax.set_zlabel('Betrag der Magnetisierung $\\langle |m| \\rangle$')
+# ax.set_title('Betrag der Magnetisierung als Funktion von $\\beta$ und $h$')

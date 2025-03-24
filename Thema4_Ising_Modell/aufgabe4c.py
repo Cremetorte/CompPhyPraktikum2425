@@ -50,7 +50,8 @@ def ising_heat_bath(L, beta, num_sweeps=100, therm_steps=1000):
     # Mittelwerte berechnen
     energy_vals, magnet_vals, abs_magnet_vals, magnet_sq_vals = [], [], [], []
     for _ in range(num_sweeps):
-        spins = heat_bath_sweep(spins, beta)
+        for i in range(int(100*beta + 1)):
+            spins = heat_bath_sweep(spins, beta)
         E, M, abs_M, M_sq = compute_observables(spins)
         energy_vals.append(E)
         magnet_vals.append(M)
