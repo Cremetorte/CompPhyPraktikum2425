@@ -113,39 +113,6 @@ plt.title("Spezifische Wärme")
 plt.grid()
 plt.show()
 
-# Aufgabe 4 b)
-"""
-# Funktion zur Berechnung der Magnetisierung als Funktion von h
-def hysteresis_curve(L, beta, h_initial, h_final, num_sweeps=1000, therm_steps=1000):
-    h_values = np.linspace(h_initial, h_final, 200)  # Magnetfeld von h_initial bis h_final
-    magnetizations = []
-    
-    for h in h_values:
-        avg_E, avg_M, avg_absM, avg_Msq, c = ising_heat_bath(L, beta, num_sweeps, therm_steps)
-        magnetizations.append(avg_M)
-    
-    return h_values, magnetizations
-
-# Beispiel für eine Hysterese-Kurve
-L = 32  # Beispielgröße des Gitters
-beta = 0.7  # Beispielwert für β
-h_initial = 1.0  # Startwert für das Magnetfeld
-h_final = -1.0  # Endwert für das Magnetfeld
-
-# Simulation der Hysterese-Kurve
-h_values, magnetization_1 = hysteresis_curve(L, beta, h_initial, h_final)
-h_values, magnetization_2 = hysteresis_curve(L, beta, h_final, h_initial)
-
-# Plot der Hysterese-Kurve
-plt.figure(figsize=(8, 5))
-plt.plot(h_values, magnetization_1, linestyle='-', color='b')
-plt.plot(h_values, magnetization_2, linestyle='-', color='b')
-
-plt.xlabel("Externes Magnetfeld $h$")
-plt.ylabel("Magnetisierung $⟨m⟩$")
-plt.title(f"Hysterese-Effekt für $L={L}$, $\\beta={beta}$")
-plt.grid()
-plt.savefig("A4b_hysterese.png")
 
 # Aufgabe 4 c)
 
@@ -191,4 +158,3 @@ ax.set_xlabel('Magnetfeld $h$')
 ax.set_ylabel('Inverse Temperatur $\\beta$')
 ax.set_zlabel('Betrag der Magnetisierung $\\langle |m| \\rangle$')
 ax.set_title('Betrag der Magnetisierung als Funktion von $\\beta$ und $h$')
-"""
