@@ -9,11 +9,11 @@ using namespace std;
 #define N_BETA 100             // Anzahl der beta-Werte
 #define NR_OBS 100             // Anzahl der Messungen pro beta
 #define N_TRY 5                // Anzahl der Versuche pro Spin bei jedem Update
-#define N_THERMALIZING 1000    // Anzahl der Updates zur Thermalisation
+#define N_THERMALIZING 10000    // Anzahl der Updates zur Thermalisation
 #define N_A 1000                // Anzahl der Updates zwischen den Messungen (Dekorrelation)
 #define J 1.0                  // Kopplungskonstante
 // #define h 0.0                  // externes Magnetfeld
-#define STEP_SIZE 0.05          // Schrittweite für beta und h
+#define STEP_SIZE 0.1          // Schrittweite für beta und h
 
 vector<double> range_vector(double start, double end, double step) {
     vector<double> result;
@@ -110,7 +110,7 @@ void heat_bath(int** spins, double beta, double h) {
     uniform_int_distribution<int> dist(0, 1);  // Generates 0 or 1
     uniform_real_distribution<double> rand_prob(0.0, 1.0);  // Generates random double between 0 and 1
 
-    double beta_h = beta * h;
+    
 
     for (int i=0;i<L;i++) {
         for (int j=0;j<L;j++) {
@@ -118,7 +118,7 @@ void heat_bath(int** spins, double beta, double h) {
                               + spins[(i + 1) % L][j] 
                               + spins[i][(j - 1 + L) % L] 
                               + spins[i][(j + 1) % L];
-            double k = beta * (J * neighbors_sum + beta_h);
+            double k = beta * (J * neighbors_sum + h);
             double q = exp(k)/(2*cosh(k));
             double r = rand_prob(gen);
             spins[i][j] = (rand_prob(gen) < q) ? -1 : +1;
@@ -134,7 +134,7 @@ void heat_bath(int** spins, double beta, double h) {
 
 using namespace std;
 
-tuple<double, double/*, double*/> compute_observables(int** spins, double h) {
+tuple<double, double, double> compute_observables(int** spins, double h) {
     double M = 0.0;
     
     // Compute magnetization (sum of all spins)
@@ -150,7 +150,7 @@ tuple<double, double/*, double*/> compute_observables(int** spins, double h) {
     // // Normalize observables
     // double M_sq = (M * M) / (L * L);
     
-    return {E / (L * L), abs(M) / (L * L)/*, M_sq / (L * L)*/};
+    return {E / (L * L), abs(M) / (L * L), M/(L*L)};
 }
 
 
@@ -159,6 +159,7 @@ vector<double> run_heatbath(double beta, double h){
     int** spins = initialize_lattice();
     vector<double> energies;
     vector<double> magnetizations;
+    vector<double> magnetizations_abs;
     // vector<double> magnetizations_sq;
     
     double mean_energy = 0.0;
@@ -177,14 +178,17 @@ vector<double> run_heatbath(double beta, double h){
             heat_bath(spins, beta, h);
         }
 
-        auto [E, M] = compute_observables(spins, h);
+        auto [E, abs_M, M] = compute_observables(spins, h);
         energies.push_back(E);
         magnetizations.push_back(M);
+        magnetizations_abs.push_back(abs_M);
+
         // magnetizations_sq.push_back(M_sq);
     }
 
     mean_energy = mean(energies);
     mean_magnetization = mean(magnetizations);
+    double mean_magnetization_abs = mean(magnetizations_abs);
     // mean_magnetization_sq = mean(magnetizations_sq);
     specific_heat = variance(energies, beta);
 
@@ -192,9 +196,8 @@ vector<double> run_heatbath(double beta, double h){
     delete_lattice(spins);
 
 
-    return {beta, h, mean_energy, mean_magnetization/*, mean_magnetization_sq*/, specific_heat};
+    return {beta, h, mean_energy, mean_magnetization, mean_magnetization_abs, specific_heat};
 }
-
 
 int main() {
     vector<double> betas = range_vector(0.1, 1.0, STEP_SIZE);
@@ -214,7 +217,7 @@ int main() {
     }
 
     ofstream file("results.csv");
-    file << "beta,mean_energy,mean_magnetization,mean_magnetization_sq,specific_heat\n";
+    file << "beta,h,mean_energy,mean_magnetization_abs,mean_magnetization,specific_heat\n";
 
     for (const auto& result : results) {
         for (size_t i = 0; i < result.size(); ++i) {
