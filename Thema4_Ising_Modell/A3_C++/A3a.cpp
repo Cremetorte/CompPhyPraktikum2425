@@ -2,15 +2,20 @@
 #include <vector>
 #include <random>
 #include <fstream>
+#include <tuple>
+#include <iostream>
+#include <cmath>
+
+using namespace std;
 
 using namespace std;
 
 #define L 128                  // Seitenlänge des Gitters
 #define N_BETA 100             // Anzahl der beta-Werte
-#define NR_OBS 100             // Anzahl der Messungen pro beta
+#define NR_OBS 200             // Anzahl der Messungen pro beta
 #define N_TRY 5                // Anzahl der Versuche pro Spin bei jedem Update
 #define N_THERMALIZING 1000    // Anzahl der Updates zur Thermalisation
-#define N_A 100                // Anzahl der Updates zwischen den Messungen (Dekorrelation)
+#define N_A 10000                // Anzahl der Updates zwischen den Messungen (Dekorrelation)
 #define J 1.0                  // Kopplungskonstante
 #define h 0.0                  // externes Magnetfeld
 #define STEP_SIZE 0.025          // Schrittweite für beta
@@ -134,10 +139,7 @@ void multihit(int** spins, double beta) {
 
 
 
-#include <iostream>
-#include <cmath>
 
-using namespace std;
 
 tuple<double, double, double> compute_observables(int** spins) {
     double M = 0.0;
@@ -178,7 +180,7 @@ vector<double> run_metropolis(double beta){
 
     // Measurement
     for (int i = 0; i < NR_OBS; ++i) {
-        for (int j = 0; j < N_A; ++j) {
+        for (int j = 0; j < (N_A*beta + 10); ++j) {
             multihit(spins, beta);
         }
 
