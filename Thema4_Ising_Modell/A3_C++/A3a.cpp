@@ -13,7 +13,7 @@ using namespace std;
 #define N_A 100                // Anzahl der Updates zwischen den Messungen (Dekorrelation)
 #define J 1.0                  // Kopplungskonstante
 #define h 0.0                  // externes Magnetfeld
-#define STEP_SIZE 0.01          // Schrittweite für beta
+#define STEP_SIZE 0.025          // Schrittweite für beta
 
 vector<double> range_vector(double start, double end, double step) {
     vector<double> result;

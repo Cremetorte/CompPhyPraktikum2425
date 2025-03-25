@@ -10,10 +10,10 @@ using namespace std;
 #define NR_OBS 100             // Anzahl der Messungen pro beta
 #define N_TRY 5                // Anzahl der Versuche pro Spin bei jedem Update
 #define N_THERMALIZING 1000    // Anzahl der Updates zur Thermalisation
-#define N_A 100                // Anzahl der Updates zwischen den Messungen (Dekorrelation)
+#define N_A 1000                // Anzahl der Updates zwischen den Messungen (Dekorrelation)
 #define J 1.0                  // Kopplungskonstante
 // #define h 0.0                  // externes Magnetfeld
-#define STEP_SIZE 0.03          // Schrittweite für beta und h
+#define STEP_SIZE 0.05          // Schrittweite für beta und h
 
 vector<double> range_vector(double start, double end, double step) {
     vector<double> result;
@@ -110,13 +110,15 @@ void heat_bath(int** spins, double beta, double h) {
     uniform_int_distribution<int> dist(0, 1);  // Generates 0 or 1
     uniform_real_distribution<double> rand_prob(0.0, 1.0);  // Generates random double between 0 and 1
 
+    double beta_h = beta * h;
+
     for (int i=0;i<L;i++) {
         for (int j=0;j<L;j++) {
             int neighbors_sum = spins[(i - 1 + L) % L][j] 
                               + spins[(i + 1) % L][j] 
                               + spins[i][(j - 1 + L) % L] 
                               + spins[i][(j + 1) % L];
-            double k = beta * (J * neighbors_sum + beta * h);
+            double k = beta * (J * neighbors_sum + beta_h);
             double q = exp(k)/(2*cosh(k));
             double r = rand_prob(gen);
             spins[i][j] = (rand_prob(gen) < q) ? -1 : +1;
@@ -197,17 +199,17 @@ vector<double> run_heatbath(double beta, double h){
 int main() {
     vector<double> betas = range_vector(0.1, 1.0, STEP_SIZE);
     vector<double> h_values = range_vector(-1.0, 1.0, STEP_SIZE);
-    vector<vector<double>> results(betas.size());
+    vector<vector<double>> results(betas.size()*h_values.size());
 
     cout << "Running simulations for " << betas.size() << " beta values" << endl;
 
-    #pragma omp parallel for
+    #pragma omp parallel for collapse(2)
     for (size_t idx = 0; idx < betas.size(); ++idx) {
         for (size_t idx_h = 0; idx_h < h_values.size(); ++idx_h) {
             double h = h_values[idx_h];
             double beta = betas[idx];
             cout << "Running simulation for beta = " << beta << " and h = " << h << endl;
-            results[idx] = run_heatbath(beta, h);
+            results[idx * h_values.size() + idx_h] = run_heatbath(beta, h);
         }
     }
 
