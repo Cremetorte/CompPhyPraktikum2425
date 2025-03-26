@@ -54,18 +54,18 @@ fig = plt.figure(figsize=(10, 7))
 ax = fig.add_subplot(111, projection='3d')
 
 # Trisurf-Plot
-surf = ax.plot_trisurf(beta, h, M, cmap='viridis', edgecolor='none')
+surf = ax.plot_trisurf(h, beta, M, cmap='viridis', edgecolor='none')
 
 # Farblegende hinzufügen
 fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
 
 # Achsentitel setzen
-ax.set_xlabel(r'$\beta$')
-ax.set_ylabel(r'$h$')
+ax.set_xlabel(r'$h$')
+ax.set_ylabel(r'$\beta$')
 ax.set_zlabel(r'$M(\beta, h)$')
-ax.set_title('3D-Trisurface-Plot der Daten')
+ax.set_title('Betrag der Magnetisierung als Funktion von $\\beta$ und $h$')
 
-plt.show()
+plt.savefig("3d_plot_m")
 
 plt.cla()
 
@@ -82,7 +82,8 @@ fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
 # Achsentitel setzen
 ax.set_xlabel(r'$\beta$')
 ax.set_ylabel(r'$h$')
-ax.set_zlabel(r'$M(\beta, h)$')
-ax.set_title('3D-Trisurface-Plot der Daten')
+ax.set_zlabel(r'$|m|(\beta, h)$')
+ax.set_title('Magnetisierung als Funktion von $\\beta$ und $h$')
 
-plt.show()
+# plt.show()
+plt.savefig("3d_plot_abs_m")
